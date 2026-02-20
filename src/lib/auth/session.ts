@@ -27,6 +27,11 @@ export function encodeSession(data: SessionData): string {
   return Buffer.from(JSON.stringify(data)).toString("base64");
 }
 
+export function decodeSession(value: string): SessionData {
+  const decoded = Buffer.from(value, "base64").toString("utf-8");
+  return JSON.parse(decoded) as SessionData;
+}
+
 export function sessionCookieOptions() {
   return {
     name: SESSION_COOKIE,
