@@ -3591,72 +3591,22 @@
       "imports": [],
       "format": "cjs"
     },
-    ".open-next/server-functions/default/.next/server/app/_global-error/page_client-reference-manifest.js": {
-      "bytes": 5988,
-      "imports": [],
-      "format": "cjs"
-    },
     ".open-next/server-functions/default/.next/server/app/_not-found/page_client-reference-manifest.js": {
       "bytes": 10246,
       "imports": [],
       "format": "cjs"
     },
-    ".open-next/server-functions/default/.next/server/app/(auth)/login/page_client-reference-manifest.js": {
-      "bytes": 11667,
-      "imports": [],
-      "format": "cjs"
-    },
-    ".open-next/server-functions/default/.next/server/app/(app)/settings/page_client-reference-manifest.js": {
-      "bytes": 16059,
-      "imports": [],
-      "format": "cjs"
-    },
-    ".open-next/server-functions/default/.next/server/app/(app)/findings/page_client-reference-manifest.js": {
-      "bytes": 16120,
-      "imports": [],
-      "format": "cjs"
-    },
-    ".open-next/server-functions/default/.next/server/app/(app)/docs/page_client-reference-manifest.js": {
-      "bytes": 15798,
-      "imports": [],
-      "format": "cjs"
-    },
-    ".open-next/server-functions/default/.next/server/app/(app)/scan-history/page_client-reference-manifest.js": {
-      "bytes": 15894,
-      "imports": [],
-      "format": "cjs"
-    },
-    ".open-next/server-functions/default/.next/server/app/(app)/dashboard/page_client-reference-manifest.js": {
-      "bytes": 15879,
-      "imports": [],
-      "format": "cjs"
-    },
-    ".open-next/server-functions/default/.next/server/app/(app)/cases/page_client-reference-manifest.js": {
-      "bytes": 16101,
-      "imports": [],
-      "format": "cjs"
-    },
-    ".open-next/server-functions/default/.next/server/app/(app)/chat/page_client-reference-manifest.js": {
-      "bytes": 15854,
-      "imports": [],
-      "format": "cjs"
-    },
-    ".open-next/server-functions/default/.next/server/app/(app)/audit-log/page_client-reference-manifest.js": {
-      "bytes": 16062,
-      "imports": [],
-      "format": "cjs"
-    },
-    ".open-next/server-functions/default/.next/server/app/(app)/apps/page_client-reference-manifest.js": {
-      "bytes": 15916,
-      "imports": [],
-      "format": "cjs"
-    },
-    ".open-next/server-functions/default/.next/server/app/(app)/artifacts/page_client-reference-manifest.js": {
-      "bytes": 16125,
+    ".open-next/server-functions/default/.next/server/app/_global-error/page_client-reference-manifest.js": {
+      "bytes": 5988,
       "imports": [],
       "format": "cjs"
     },
     ".open-next/server-functions/default/.next/server/app/api/settings/route_client-reference-manifest.js": {
+      "bytes": 315,
+      "imports": [],
+      "format": "cjs"
+    },
+    ".open-next/server-functions/default/.next/server/app/api/findings/route_client-reference-manifest.js": {
       "bytes": 315,
       "imports": [],
       "format": "cjs"
@@ -3666,8 +3616,8 @@
       "imports": [],
       "format": "cjs"
     },
-    ".open-next/server-functions/default/.next/server/app/api/findings/route_client-reference-manifest.js": {
-      "bytes": 315,
+    ".open-next/server-functions/default/.next/server/app/api/employees/route_client-reference-manifest.js": {
+      "bytes": 316,
       "imports": [],
       "format": "cjs"
     },
@@ -3676,8 +3626,8 @@
       "imports": [],
       "format": "cjs"
     },
-    ".open-next/server-functions/default/.next/server/app/api/employees/route_client-reference-manifest.js": {
-      "bytes": 316,
+    ".open-next/server-functions/default/.next/server/app/api/chat/route_client-reference-manifest.js": {
+      "bytes": 311,
       "imports": [],
       "format": "cjs"
     },
@@ -3701,8 +3651,23 @@
       "imports": [],
       "format": "cjs"
     },
-    ".open-next/server-functions/default/.next/server/app/(app)/cases/[id]/page_client-reference-manifest.js": {
-      "bytes": 16135,
+    ".open-next/server-functions/default/.next/server/app/(auth)/login/page_client-reference-manifest.js": {
+      "bytes": 11667,
+      "imports": [],
+      "format": "cjs"
+    },
+    ".open-next/server-functions/default/.next/server/app/(app)/settings/page_client-reference-manifest.js": {
+      "bytes": 16059,
+      "imports": [],
+      "format": "cjs"
+    },
+    ".open-next/server-functions/default/.next/server/app/(app)/findings/page_client-reference-manifest.js": {
+      "bytes": 16120,
+      "imports": [],
+      "format": "cjs"
+    },
+    ".open-next/server-functions/default/.next/server/app/(app)/scan-history/page_client-reference-manifest.js": {
+      "bytes": 15894,
       "imports": [],
       "format": "cjs"
     },
@@ -3711,13 +3676,38 @@
       "imports": [],
       "format": "cjs"
     },
-    ".open-next/server-functions/default/.next/server/app/api/chat/route_client-reference-manifest.js": {
-      "bytes": 311,
+    ".open-next/server-functions/default/.next/server/app/(app)/docs/page_client-reference-manifest.js": {
+      "bytes": 15798,
       "imports": [],
       "format": "cjs"
     },
-    ".open-next/server-functions/default/.next/server/app/api/scan/history/route_client-reference-manifest.js": {
-      "bytes": 319,
+    ".open-next/server-functions/default/.next/server/app/(app)/chat/page_client-reference-manifest.js": {
+      "bytes": 15854,
+      "imports": [],
+      "format": "cjs"
+    },
+    ".open-next/server-functions/default/.next/server/app/(app)/dashboard/page_client-reference-manifest.js": {
+      "bytes": 15879,
+      "imports": [],
+      "format": "cjs"
+    },
+    ".open-next/server-functions/default/.next/server/app/(app)/audit-log/page_client-reference-manifest.js": {
+      "bytes": 16062,
+      "imports": [],
+      "format": "cjs"
+    },
+    ".open-next/server-functions/default/.next/server/app/(app)/cases/page_client-reference-manifest.js": {
+      "bytes": 16101,
+      "imports": [],
+      "format": "cjs"
+    },
+    ".open-next/server-functions/default/.next/server/app/(app)/apps/page_client-reference-manifest.js": {
+      "bytes": 15916,
+      "imports": [],
+      "format": "cjs"
+    },
+    ".open-next/server-functions/default/.next/server/app/(app)/artifacts/page_client-reference-manifest.js": {
+      "bytes": 16125,
       "imports": [],
       "format": "cjs"
     },
@@ -3751,6 +3741,11 @@
       "imports": [],
       "format": "cjs"
     },
+    ".open-next/server-functions/default/.next/server/app/api/scan/history/route_client-reference-manifest.js": {
+      "bytes": 319,
+      "imports": [],
+      "format": "cjs"
+    },
     ".open-next/server-functions/default/.next/server/app/api/cases/[id]/route_client-reference-manifest.js": {
       "bytes": 317,
       "imports": [],
@@ -3758,6 +3753,11 @@
     },
     ".open-next/server-functions/default/.next/server/app/api/artifacts/[id]/route_client-reference-manifest.js": {
       "bytes": 321,
+      "imports": [],
+      "format": "cjs"
+    },
+    ".open-next/server-functions/default/.next/server/app/(app)/cases/[id]/page_client-reference-manifest.js": {
+      "bytes": 16135,
       "imports": [],
       "format": "cjs"
     },
@@ -3776,11 +3776,6 @@
       "imports": [],
       "format": "cjs"
     },
-    ".open-next/server-functions/default/.next/server/app/api/apps/[clientId]/restore-users/route_client-reference-manifest.js": {
-      "bytes": 336,
-      "imports": [],
-      "format": "cjs"
-    },
     ".open-next/server-functions/default/.next/server/app/api/apps/[clientId]/global-remove/route_client-reference-manifest.js": {
       "bytes": 336,
       "imports": [],
@@ -3791,18 +3786,23 @@
       "imports": [],
       "format": "cjs"
     },
-    ".open-next/server-functions/default/.next/server/app/api/cases/[id]/remediate/route_client-reference-manifest.js": {
-      "bytes": 327,
-      "imports": [],
-      "format": "cjs"
-    },
     ".open-next/server-functions/default/.next/server/app/api/cases/[id]/scan/route_client-reference-manifest.js": {
       "bytes": 322,
       "imports": [],
       "format": "cjs"
     },
+    ".open-next/server-functions/default/.next/server/app/api/cases/[id]/remediate/route_client-reference-manifest.js": {
+      "bytes": 327,
+      "imports": [],
+      "format": "cjs"
+    },
     ".open-next/server-functions/default/.next/server/app/api/cases/[id]/bulk-remediate/route_client-reference-manifest.js": {
       "bytes": 332,
+      "imports": [],
+      "format": "cjs"
+    },
+    ".open-next/server-functions/default/.next/server/app/api/apps/[clientId]/restore-users/route_client-reference-manifest.js": {
+      "bytes": 336,
       "imports": [],
       "format": "cjs"
     },
@@ -3835,69 +3835,14 @@
           "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/page_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/_global-error/page_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/_global-error/page_client-reference-manifest.js"
-        },
-        {
           "path": ".open-next/server-functions/default/.next/server/app/_not-found/page_client-reference-manifest.js",
           "kind": "require-call",
           "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/_not-found/page_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/(auth)/login/page_client-reference-manifest.js",
+          "path": ".open-next/server-functions/default/.next/server/app/_global-error/page_client-reference-manifest.js",
           "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(auth)/login/page_client-reference-manifest.js"
-        },
-        {
-          "path": ".open-next/server-functions/default/.next/server/app/(app)/settings/page_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/settings/page_client-reference-manifest.js"
-        },
-        {
-          "path": ".open-next/server-functions/default/.next/server/app/(app)/findings/page_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/findings/page_client-reference-manifest.js"
-        },
-        {
-          "path": ".open-next/server-functions/default/.next/server/app/(app)/docs/page_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/docs/page_client-reference-manifest.js"
-        },
-        {
-          "path": ".open-next/server-functions/default/.next/server/app/(app)/scan-history/page_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/scan-history/page_client-reference-manifest.js"
-        },
-        {
-          "path": ".open-next/server-functions/default/.next/server/app/(app)/dashboard/page_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/dashboard/page_client-reference-manifest.js"
-        },
-        {
-          "path": ".open-next/server-functions/default/.next/server/app/(app)/cases/page_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/cases/page_client-reference-manifest.js"
-        },
-        {
-          "path": ".open-next/server-functions/default/.next/server/app/(app)/chat/page_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/chat/page_client-reference-manifest.js"
-        },
-        {
-          "path": ".open-next/server-functions/default/.next/server/app/(app)/audit-log/page_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/audit-log/page_client-reference-manifest.js"
-        },
-        {
-          "path": ".open-next/server-functions/default/.next/server/app/(app)/apps/page_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/apps/page_client-reference-manifest.js"
-        },
-        {
-          "path": ".open-next/server-functions/default/.next/server/app/(app)/artifacts/page_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/artifacts/page_client-reference-manifest.js"
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/_global-error/page_client-reference-manifest.js"
         },
         {
           "path": ".open-next/server-functions/default/.next/server/app/api/settings/route_client-reference-manifest.js",
@@ -3905,14 +3850,19 @@
           "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/settings/route_client-reference-manifest.js"
         },
         {
+          "path": ".open-next/server-functions/default/.next/server/app/api/findings/route_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/findings/route_client-reference-manifest.js"
+        },
+        {
           "path": ".open-next/server-functions/default/.next/server/app/api/scan/route_client-reference-manifest.js",
           "kind": "require-call",
           "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/scan/route_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/api/findings/route_client-reference-manifest.js",
+          "path": ".open-next/server-functions/default/.next/server/app/api/employees/route_client-reference-manifest.js",
           "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/findings/route_client-reference-manifest.js"
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/employees/route_client-reference-manifest.js"
         },
         {
           "path": ".open-next/server-functions/default/.next/server/app/api/dashboard/route_client-reference-manifest.js",
@@ -3920,9 +3870,9 @@
           "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/dashboard/route_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/api/employees/route_client-reference-manifest.js",
+          "path": ".open-next/server-functions/default/.next/server/app/api/chat/route_client-reference-manifest.js",
           "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/employees/route_client-reference-manifest.js"
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/chat/route_client-reference-manifest.js"
         },
         {
           "path": ".open-next/server-functions/default/.next/server/app/api/cases/route_client-reference-manifest.js",
@@ -3945,9 +3895,24 @@
           "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/artifacts/route_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/(app)/cases/[id]/page_client-reference-manifest.js",
+          "path": ".open-next/server-functions/default/.next/server/app/(auth)/login/page_client-reference-manifest.js",
           "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/cases/[id]/page_client-reference-manifest.js"
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(auth)/login/page_client-reference-manifest.js"
+        },
+        {
+          "path": ".open-next/server-functions/default/.next/server/app/(app)/settings/page_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/settings/page_client-reference-manifest.js"
+        },
+        {
+          "path": ".open-next/server-functions/default/.next/server/app/(app)/findings/page_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/findings/page_client-reference-manifest.js"
+        },
+        {
+          "path": ".open-next/server-functions/default/.next/server/app/(app)/scan-history/page_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/scan-history/page_client-reference-manifest.js"
         },
         {
           "path": ".open-next/server-functions/default/.next/server/app/(app)/employees/page_client-reference-manifest.js",
@@ -3955,14 +3920,39 @@
           "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/employees/page_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/api/chat/route_client-reference-manifest.js",
+          "path": ".open-next/server-functions/default/.next/server/app/(app)/docs/page_client-reference-manifest.js",
           "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/chat/route_client-reference-manifest.js"
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/docs/page_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/api/scan/history/route_client-reference-manifest.js",
+          "path": ".open-next/server-functions/default/.next/server/app/(app)/chat/page_client-reference-manifest.js",
           "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/scan/history/route_client-reference-manifest.js"
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/chat/page_client-reference-manifest.js"
+        },
+        {
+          "path": ".open-next/server-functions/default/.next/server/app/(app)/dashboard/page_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/dashboard/page_client-reference-manifest.js"
+        },
+        {
+          "path": ".open-next/server-functions/default/.next/server/app/(app)/audit-log/page_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/audit-log/page_client-reference-manifest.js"
+        },
+        {
+          "path": ".open-next/server-functions/default/.next/server/app/(app)/cases/page_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/cases/page_client-reference-manifest.js"
+        },
+        {
+          "path": ".open-next/server-functions/default/.next/server/app/(app)/apps/page_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/apps/page_client-reference-manifest.js"
+        },
+        {
+          "path": ".open-next/server-functions/default/.next/server/app/(app)/artifacts/page_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/artifacts/page_client-reference-manifest.js"
         },
         {
           "path": ".open-next/server-functions/default/.next/server/app/api/findings/[id]/route_client-reference-manifest.js",
@@ -3995,6 +3985,11 @@
           "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/apps/[clientId]/route_client-reference-manifest.js"
         },
         {
+          "path": ".open-next/server-functions/default/.next/server/app/api/scan/history/route_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/scan/history/route_client-reference-manifest.js"
+        },
+        {
           "path": ".open-next/server-functions/default/.next/server/app/api/cases/[id]/route_client-reference-manifest.js",
           "kind": "require-call",
           "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/cases/[id]/route_client-reference-manifest.js"
@@ -4003,6 +3998,11 @@
           "path": ".open-next/server-functions/default/.next/server/app/api/artifacts/[id]/route_client-reference-manifest.js",
           "kind": "require-call",
           "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/artifacts/[id]/route_client-reference-manifest.js"
+        },
+        {
+          "path": ".open-next/server-functions/default/.next/server/app/(app)/cases/[id]/page_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/(app)/cases/[id]/page_client-reference-manifest.js"
         },
         {
           "path": ".open-next/server-functions/default/.next/server/app/api/employees/[id]/revoke/route_client-reference-manifest.js",
@@ -4020,11 +4020,6 @@
           "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/apps/[clientId]/revoke-users/route_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/api/apps/[clientId]/restore-users/route_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/apps/[clientId]/restore-users/route_client-reference-manifest.js"
-        },
-        {
           "path": ".open-next/server-functions/default/.next/server/app/api/apps/[clientId]/global-remove/route_client-reference-manifest.js",
           "kind": "require-call",
           "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/apps/[clientId]/global-remove/route_client-reference-manifest.js"
@@ -4035,19 +4030,24 @@
           "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/cases/[id]/scheduled-remediation/route_client-reference-manifest.js"
         },
         {
-          "path": ".open-next/server-functions/default/.next/server/app/api/cases/[id]/remediate/route_client-reference-manifest.js",
-          "kind": "require-call",
-          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/cases/[id]/remediate/route_client-reference-manifest.js"
-        },
-        {
           "path": ".open-next/server-functions/default/.next/server/app/api/cases/[id]/scan/route_client-reference-manifest.js",
           "kind": "require-call",
           "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/cases/[id]/scan/route_client-reference-manifest.js"
         },
         {
+          "path": ".open-next/server-functions/default/.next/server/app/api/cases/[id]/remediate/route_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/cases/[id]/remediate/route_client-reference-manifest.js"
+        },
+        {
           "path": ".open-next/server-functions/default/.next/server/app/api/cases/[id]/bulk-remediate/route_client-reference-manifest.js",
           "kind": "require-call",
           "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/cases/[id]/bulk-remediate/route_client-reference-manifest.js"
+        },
+        {
+          "path": ".open-next/server-functions/default/.next/server/app/api/apps/[clientId]/restore-users/route_client-reference-manifest.js",
+          "kind": "require-call",
+          "original": "/Users/igodju/Projects/jml_management/.open-next/server-functions/default/.next/server/app/api/apps/[clientId]/restore-users/route_client-reference-manifest.js"
         }
       ],
       "format": "cjs"
@@ -11519,59 +11519,29 @@
         ".open-next/server-functions/default/.next/server/app/page_client-reference-manifest.js": {
           "bytesInOutput": 9710
         },
-        ".open-next/server-functions/default/.next/server/app/_global-error/page_client-reference-manifest.js": {
-          "bytesInOutput": 5754
-        },
         ".open-next/server-functions/default/.next/server/app/_not-found/page_client-reference-manifest.js": {
           "bytesInOutput": 9810
         },
-        ".open-next/server-functions/default/.next/server/app/(auth)/login/page_client-reference-manifest.js": {
-          "bytesInOutput": 11178
-        },
-        ".open-next/server-functions/default/.next/server/app/(app)/settings/page_client-reference-manifest.js": {
-          "bytesInOutput": 15469
-        },
-        ".open-next/server-functions/default/.next/server/app/(app)/findings/page_client-reference-manifest.js": {
-          "bytesInOutput": 15530
-        },
-        ".open-next/server-functions/default/.next/server/app/(app)/docs/page_client-reference-manifest.js": {
-          "bytesInOutput": 15204
-        },
-        ".open-next/server-functions/default/.next/server/app/(app)/scan-history/page_client-reference-manifest.js": {
-          "bytesInOutput": 15308
-        },
-        ".open-next/server-functions/default/.next/server/app/(app)/dashboard/page_client-reference-manifest.js": {
-          "bytesInOutput": 15290
-        },
-        ".open-next/server-functions/default/.next/server/app/(app)/cases/page_client-reference-manifest.js": {
-          "bytesInOutput": 15509
-        },
-        ".open-next/server-functions/default/.next/server/app/(app)/chat/page_client-reference-manifest.js": {
-          "bytesInOutput": 15261
-        },
-        ".open-next/server-functions/default/.next/server/app/(app)/audit-log/page_client-reference-manifest.js": {
-          "bytesInOutput": 15474
-        },
-        ".open-next/server-functions/default/.next/server/app/(app)/apps/page_client-reference-manifest.js": {
-          "bytesInOutput": 15323
-        },
-        ".open-next/server-functions/default/.next/server/app/(app)/artifacts/page_client-reference-manifest.js": {
-          "bytesInOutput": 15537
+        ".open-next/server-functions/default/.next/server/app/_global-error/page_client-reference-manifest.js": {
+          "bytesInOutput": 5754
         },
         ".open-next/server-functions/default/.next/server/app/api/settings/route_client-reference-manifest.js": {
           "bytesInOutput": 465
         },
+        ".open-next/server-functions/default/.next/server/app/api/findings/route_client-reference-manifest.js": {
+          "bytesInOutput": 466
+        },
         ".open-next/server-functions/default/.next/server/app/api/scan/route_client-reference-manifest.js": {
           "bytesInOutput": 458
         },
-        ".open-next/server-functions/default/.next/server/app/api/findings/route_client-reference-manifest.js": {
-          "bytesInOutput": 466
+        ".open-next/server-functions/default/.next/server/app/api/employees/route_client-reference-manifest.js": {
+          "bytesInOutput": 468
         },
         ".open-next/server-functions/default/.next/server/app/api/dashboard/route_client-reference-manifest.js": {
           "bytesInOutput": 468
         },
-        ".open-next/server-functions/default/.next/server/app/api/employees/route_client-reference-manifest.js": {
-          "bytesInOutput": 468
+        ".open-next/server-functions/default/.next/server/app/api/chat/route_client-reference-manifest.js": {
+          "bytesInOutput": 458
         },
         ".open-next/server-functions/default/.next/server/app/api/cases/route_client-reference-manifest.js": {
           "bytesInOutput": 460
@@ -11583,19 +11553,43 @@
           "bytesInOutput": 458
         },
         ".open-next/server-functions/default/.next/server/app/api/artifacts/route_client-reference-manifest.js": {
-          "bytesInOutput": 468
+          "bytesInOutput": 469
         },
-        ".open-next/server-functions/default/.next/server/app/(app)/cases/[id]/page_client-reference-manifest.js": {
-          "bytesInOutput": 15548
+        ".open-next/server-functions/default/.next/server/app/(auth)/login/page_client-reference-manifest.js": {
+          "bytesInOutput": 11178
+        },
+        ".open-next/server-functions/default/.next/server/app/(app)/settings/page_client-reference-manifest.js": {
+          "bytesInOutput": 15469
+        },
+        ".open-next/server-functions/default/.next/server/app/(app)/findings/page_client-reference-manifest.js": {
+          "bytesInOutput": 15530
+        },
+        ".open-next/server-functions/default/.next/server/app/(app)/scan-history/page_client-reference-manifest.js": {
+          "bytesInOutput": 15308
         },
         ".open-next/server-functions/default/.next/server/app/(app)/employees/page_client-reference-manifest.js": {
-          "bytesInOutput": 15358
+          "bytesInOutput": 15357
         },
-        ".open-next/server-functions/default/.next/server/app/api/chat/route_client-reference-manifest.js": {
-          "bytesInOutput": 459
+        ".open-next/server-functions/default/.next/server/app/(app)/docs/page_client-reference-manifest.js": {
+          "bytesInOutput": 15204
         },
-        ".open-next/server-functions/default/.next/server/app/api/scan/history/route_client-reference-manifest.js": {
-          "bytesInOutput": 475
+        ".open-next/server-functions/default/.next/server/app/(app)/chat/page_client-reference-manifest.js": {
+          "bytesInOutput": 15261
+        },
+        ".open-next/server-functions/default/.next/server/app/(app)/dashboard/page_client-reference-manifest.js": {
+          "bytesInOutput": 15291
+        },
+        ".open-next/server-functions/default/.next/server/app/(app)/audit-log/page_client-reference-manifest.js": {
+          "bytesInOutput": 15474
+        },
+        ".open-next/server-functions/default/.next/server/app/(app)/cases/page_client-reference-manifest.js": {
+          "bytesInOutput": 15509
+        },
+        ".open-next/server-functions/default/.next/server/app/(app)/apps/page_client-reference-manifest.js": {
+          "bytesInOutput": 15323
+        },
+        ".open-next/server-functions/default/.next/server/app/(app)/artifacts/page_client-reference-manifest.js": {
+          "bytesInOutput": 15537
         },
         ".open-next/server-functions/default/.next/server/app/api/findings/[id]/route_client-reference-manifest.js": {
           "bytesInOutput": 477
@@ -11615,11 +11609,17 @@
         ".open-next/server-functions/default/.next/server/app/api/apps/[clientId]/route_client-reference-manifest.js": {
           "bytesInOutput": 481
         },
+        ".open-next/server-functions/default/.next/server/app/api/scan/history/route_client-reference-manifest.js": {
+          "bytesInOutput": 475
+        },
         ".open-next/server-functions/default/.next/server/app/api/cases/[id]/route_client-reference-manifest.js": {
           "bytesInOutput": 471
         },
         ".open-next/server-functions/default/.next/server/app/api/artifacts/[id]/route_client-reference-manifest.js": {
           "bytesInOutput": 479
+        },
+        ".open-next/server-functions/default/.next/server/app/(app)/cases/[id]/page_client-reference-manifest.js": {
+          "bytesInOutput": 15548
         },
         ".open-next/server-functions/default/.next/server/app/api/employees/[id]/revoke/route_client-reference-manifest.js": {
           "bytesInOutput": 493
@@ -11630,23 +11630,23 @@
         ".open-next/server-functions/default/.next/server/app/api/apps/[clientId]/revoke-users/route_client-reference-manifest.js": {
           "bytesInOutput": 507
         },
-        ".open-next/server-functions/default/.next/server/app/api/apps/[clientId]/restore-users/route_client-reference-manifest.js": {
-          "bytesInOutput": 509
-        },
         ".open-next/server-functions/default/.next/server/app/api/apps/[clientId]/global-remove/route_client-reference-manifest.js": {
           "bytesInOutput": 509
         },
         ".open-next/server-functions/default/.next/server/app/api/cases/[id]/scheduled-remediation/route_client-reference-manifest.js": {
           "bytesInOutput": 515
         },
-        ".open-next/server-functions/default/.next/server/app/api/cases/[id]/remediate/route_client-reference-manifest.js": {
-          "bytesInOutput": 491
-        },
         ".open-next/server-functions/default/.next/server/app/api/cases/[id]/scan/route_client-reference-manifest.js": {
           "bytesInOutput": 481
         },
+        ".open-next/server-functions/default/.next/server/app/api/cases/[id]/remediate/route_client-reference-manifest.js": {
+          "bytesInOutput": 491
+        },
         ".open-next/server-functions/default/.next/server/app/api/cases/[id]/bulk-remediate/route_client-reference-manifest.js": {
           "bytesInOutput": 501
+        },
+        ".open-next/server-functions/default/.next/server/app/api/apps/[clientId]/restore-users/route_client-reference-manifest.js": {
+          "bytesInOutput": 509
         },
         ".open-next/server-functions/default/node_modules/next/dist/server/load-manifest.external.js": {
           "bytesInOutput": 39726
