@@ -8,7 +8,12 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "seed": "npx tsx scripts/seed.ts",
+    "seed:frappe": "npx tsx scripts/seed.ts --frappe",
+    "scheduler": "npx tsx scripts/scheduler.ts",
+    "cf:build": "opennextjs-cloudflare build",
+    "cf:deploy": "wrangler deploy --name jml-management"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.16.5",
