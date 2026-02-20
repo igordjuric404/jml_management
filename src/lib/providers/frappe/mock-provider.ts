@@ -28,6 +28,7 @@ import {
   mockAuditLogs,
   mockSettings,
 } from "./mock-data";
+import { sendFindingAlert } from "@/lib/email";
 
 function clone<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj));
@@ -291,6 +292,24 @@ export class MockProvider implements HrProvider {
     }
 
     logAction("ScanFinished", "SYSTEM", { scan_type: "system_scan", discoveries });
+
+    if (settings.notify_on_new_findings && discoveries > 0) {
+      const criticalFindings = findings.filter(
+        f => !f.closed_at && (f.severity === "Critical" || f.severity === "High")
+      ).slice(-discoveries);
+      for (const f of criticalFindings) {
+        const c = cases.find(c2 => c2.name === f.case);
+        sendFindingAlert({
+          findingName: f.name,
+          severity: f.severity,
+          findingType: f.finding_type,
+          summary: f.summary,
+          caseName: f.case,
+          employeeEmail: c?.primary_email || "unknown",
+        }, settings.notification_email || undefined).catch(() => {});
+      }
+    }
+
     return { status: "success", message: `System scan found ${discoveries} new issue(s).` };
   }
 
@@ -435,8 +454,52 @@ export class MockProvider implements HrProvider {
     return clone(f);
   }
 
+  async remediateFinding(name: string): Promise<RemediationResult> {
+    const f = findings.find(f => f.name === name);
+    if (!f) throw new Error(`Finding not found: ${name}`);
+    if (f.closed_at) throw new Error(`Finding already closed: ${name}`);
+
+    f.closed_at = new Date().toISOString();
+
+    const relatedArtifacts = artifacts.filter(a => a.case === f.case && a.status === "Active");
+    const typeMap: Record<string, string[]> = {
+      LingeringOAuthGrant: ["OAuthToken"],
+      LingeringASP: ["ASP"],
+      PostOffboardLogin: ["LoginEvent"],
+      PostOffboardSuspiciousLogin: ["LoginEvent"],
+      AdminMFAWeak: ["AdminMFA"],
+      DWDHighRisk: ["DWDChange"],
+    };
+    const targetTypes = typeMap[f.finding_type] || [];
+    let remediated = 0;
+    for (const a of relatedArtifacts) {
+      if (targetTypes.includes(a.artifact_type)) {
+        a.status = a.artifact_type === "ASP" ? "Deleted" : "Revoked";
+        remediated++;
+      }
+    }
+
+    logAction("RemediationCompleted", f.case, { finding: name, artifacts_remediated: remediated });
+    this._rescanCase(f.case);
+
+    return { status: "success", artifacts_remediated: remediated, findings_closed: 1 };
+  }
+
   async getEmployeeList(): Promise<Employee[]> {
-    return clone(mockEmployees).filter(e => e.case_count! > 0 || e.emp_status === "Left");
+    return clone(mockEmployees)
+      .filter(e => e.case_count! > 0 || e.emp_status === "Left")
+      .map(e => {
+        const empCases = cases.filter(c => c.employee === e.employee_id);
+        const caseNames = empCases.map(c => c.name);
+        const empArtifacts = artifacts.filter(a => caseNames.includes(a.case));
+        const empFindings = findings.filter(f => caseNames.includes(f.case));
+        return {
+          ...e,
+          case_count: empCases.length,
+          active_artifacts: empArtifacts.filter(a => a.status === "Active").length,
+          open_findings: empFindings.filter(f => !f.closed_at).length,
+        };
+      });
   }
 
   async getEmployeeDetail(employeeId: string): Promise<EmployeeDetail> {
@@ -628,39 +691,131 @@ export class MockProvider implements HrProvider {
 
   async chat(message: string): Promise<{ reply: string; sources: { title: string; url: string }[] }> {
     const lowerMsg = message.toLowerCase();
-    if (lowerMsg.includes("case") || lowerMsg.includes("offboard")) {
+
+    if (lowerMsg.includes("audit log") || lowerMsg.includes("audit") || lowerMsg.includes("log")) {
+      const recentLogs = auditLogs.slice(0, 5);
+      const logSummary = recentLogs.map(l => `- ${l.action_type} by ${l.actor_user} for ${l.target_email} (${l.result})`).join("\n");
       return {
-        reply: `There are currently ${cases.length} offboarding cases. ${cases.filter(c => c.status === "Gaps Found").length} have gaps found. Use the Dashboard or Cases page to view details.`,
+        reply: `Audit logs are stored in the Unified Audit Log and record every scan, remediation, and administrative action. There are ${auditLogs.length} total log entries.\n\nRecent entries:\n${logSummary}\n\nYou can view the full audit log at /audit-log.`,
         sources: [
-          { title: "Dashboard", url: "/dashboard" },
-          { title: "Offboarding Cases", url: "/cases" },
+          { title: "Audit Log", url: "/audit-log" },
+          { title: "Documentation: Audit Log", url: "/docs" },
         ],
       };
     }
-    if (lowerMsg.includes("artifact") || lowerMsg.includes("token") || lowerMsg.includes("oauth")) {
+
+    if (lowerMsg.includes("employee") || lowerMsg.includes("staff") || lowerMsg.includes("people") || lowerMsg.includes("who")) {
+      const leftEmps = mockEmployees.filter(e => e.emp_status === "Left");
+      const activeEmps = mockEmployees.filter(e => e.emp_status === "Active");
+      const withFindings = mockEmployees.filter(e => (e.open_findings ?? 0) > 0);
       return {
-        reply: `There are ${artifacts.filter(a => a.status === "Active").length} active artifacts across all cases. OAuth tokens are the most common artifact type.`,
+        reply: `There are ${mockEmployees.length} total employees: ${activeEmps.length} active and ${leftEmps.length} who have left. ${withFindings.length} employees have open findings that need attention.\n\nEmployees with most open issues:\n${withFindings.sort((a, b) => (b.open_findings ?? 0) - (a.open_findings ?? 0)).slice(0, 5).map(e => `- ${e.employee_name} (${e.company_email}): ${e.active_artifacts} active artifacts, ${e.open_findings} open findings`).join("\n")}`,
+        sources: [
+          { title: "Employee Overview", url: "/employees" },
+          { title: "Dashboard", url: "/dashboard" },
+        ],
+      };
+    }
+
+    if (lowerMsg.includes("remediat") || lowerMsg.includes("fix") || lowerMsg.includes("revoke") || lowerMsg.includes("resolve")) {
+      const remediatedCases = cases.filter(c => c.status === "Remediated");
+      const gapsCases = cases.filter(c => c.status === "Gaps Found");
+      return {
+        reply: `Remediation is the process of revoking access, deleting credentials, and closing findings for offboarded employees.\n\n**Full Remediation Bundle** includes:\n1. Revoke all OAuth tokens\n2. Delete all ASPs (App-Specific Passwords)\n3. Sign out all active sessions\n4. Close all findings\n5. Update case status\n\nCurrent state: ${remediatedCases.length} cases remediated, ${gapsCases.length} cases still have gaps that need remediation.\n\nYou can trigger remediation from a case detail page or use bulk remediation from the artifacts page.`,
+        sources: [
+          { title: "Offboarding Cases", url: "/cases" },
+          { title: "Documentation: Remediation", url: "/docs" },
+        ],
+      };
+    }
+
+    if (lowerMsg.includes("setting") || lowerMsg.includes("config") || lowerMsg.includes("interval") || lowerMsg.includes("schedul")) {
+      return {
+        reply: `OGM Settings control automation behavior:\n\n- **Auto scan on offboard**: ${settings.auto_scan_on_offboard ? "Enabled" : "Disabled"}\n- **Auto remediate on offboard**: ${settings.auto_remediate_on_offboard ? "Enabled" : "Disabled"}\n- **Background scan**: ${settings.background_scan_enabled ? "Enabled" : "Disabled"} (interval: ${settings.background_scan_interval})\n- **Remediation check interval**: ${settings.remediation_check_interval}\n- **Notifications**: ${settings.notify_on_new_findings ? "Enabled" : "Disabled"} (email: ${settings.notification_email || "not set"})\n- **Default remediation action**: ${settings.default_remediation_action}\n\nYou can modify these at /settings.`,
+        sources: [
+          { title: "Settings", url: "/settings" },
+          { title: "Documentation: Integrations", url: "/docs" },
+        ],
+      };
+    }
+
+    if (lowerMsg.includes("scan") || lowerMsg.includes("discover")) {
+      const scanLogs = auditLogs.filter(l => l.action_type === "ScanFinished");
+      return {
+        reply: `Scans discover access artifacts (OAuth tokens, ASPs, login events) for offboarded employees.\n\n- **System scan**: Checks all hidden artifacts and assigns them to cases\n- **Case scan**: Scans a specific employee's access\n- **Background scan**: Runs automatically at the configured interval (${settings.background_scan_interval})\n\nThere have been ${scanLogs.length} completed scans. You can trigger a manual scan from any case detail page or run a system-wide scan from the dashboard.`,
+        sources: [
+          { title: "Scan History", url: "/scan-history" },
+          { title: "Dashboard", url: "/dashboard" },
+        ],
+      };
+    }
+
+    if (lowerMsg.includes("case") || lowerMsg.includes("offboard")) {
+      const statusCounts = cases.reduce((acc, c) => {
+        acc[c.status] = (acc[c.status] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+      const statusSummary = Object.entries(statusCounts).map(([s, c]) => `${s}: ${c}`).join(", ");
+      return {
+        reply: `There are ${cases.length} offboarding cases.\n\nStatus breakdown: ${statusSummary}\n\nCases with the most issues:\n${cases.filter(c => c.status === "Gaps Found").map(c => `- ${c.name} (${c.employee_name}, ${c.primary_email}): ${c.status}`).join("\n")}`,
+        sources: [
+          { title: "Offboarding Cases", url: "/cases" },
+          { title: "Dashboard", url: "/dashboard" },
+        ],
+      };
+    }
+
+    if (lowerMsg.includes("artifact") || lowerMsg.includes("token") || lowerMsg.includes("oauth") || lowerMsg.includes("asp") || lowerMsg.includes("access")) {
+      const active = artifacts.filter(a => a.status === "Active");
+      const byType = active.reduce((acc, a) => {
+        acc[a.artifact_type] = (acc[a.artifact_type] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+      const typeSummary = Object.entries(byType).map(([t, c]) => `${t}: ${c}`).join(", ");
+      return {
+        reply: `There are ${active.length} active access artifacts across all cases.\n\nBreakdown by type: ${typeSummary}\n\nArtifacts represent concrete access mechanisms: OAuth tokens, App-Specific Passwords (ASPs), login events, admin MFA settings, and Domain-Wide Delegation changes. Active artifacts need review and potential remediation.`,
         sources: [
           { title: "Access Artifacts", url: "/artifacts" },
           { title: "OAuth Apps", url: "/apps" },
         ],
       };
     }
-    if (lowerMsg.includes("finding") || lowerMsg.includes("risk") || lowerMsg.includes("critical")) {
-      const critical = findings.filter(f => f.severity === "Critical" && !f.closed_at);
+
+    if (lowerMsg.includes("finding") || lowerMsg.includes("risk") || lowerMsg.includes("critical") || lowerMsg.includes("severity") || lowerMsg.includes("gap")) {
+      const open = findings.filter(f => !f.closed_at);
+      const bySev = open.reduce((acc, f) => {
+        acc[f.severity] = (acc[f.severity] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
+      const sevSummary = Object.entries(bySev).map(([s, c]) => `${s}: ${c}`).join(", ");
       return {
-        reply: `There are ${critical.length} open critical findings. LingeringOAuthGrant is the most common finding type.`,
+        reply: `There are ${open.length} open findings (${findings.length} total including closed).\n\nSeverity breakdown: ${sevSummary}\n\nFinding types include: LingeringOAuthGrant, LingeringASP, PostOffboardLogin, AdminMFAWeak, DWDHighRisk, and OffboardingNotEnforced.\n\nCritical and high-severity findings should be remediated immediately.`,
         sources: [
           { title: "Findings", url: "/findings" },
-          { title: "Documentation: Findings", url: "/docs#findings" },
+          { title: "Documentation: Findings", url: "/docs" },
         ],
       };
     }
+
+    if (lowerMsg.includes("doc") || lowerMsg.includes("help") || lowerMsg.includes("how") || lowerMsg.includes("what") || lowerMsg.includes("explain")) {
+      return {
+        reply: `The OAuth Gap Monitor (OGM) is a system for managing the security lifecycle of employee offboarding. Here's how it works:\n\n1. **Cases** are created when an employee leaves (automatically or manually)\n2. **Scans** discover lingering access artifacts (OAuth tokens, ASPs, login events)\n3. **Findings** are policy violations detected by scans (e.g., lingering grants, post-offboard logins)\n4. **Remediation** revokes access and closes findings\n5. **Audit logs** track every action taken\n\nThe system integrates with Frappe HRMS for employee data and Google Workspace for OAuth/access management.`,
+        sources: [
+          { title: "Documentation", url: "/docs" },
+          { title: "Dashboard", url: "/dashboard" },
+          { title: "Settings", url: "/settings" },
+        ],
+      };
+    }
+
+    const totalCases = cases.length;
+    const openFindings = findings.filter(f => !f.closed_at).length;
+    const activeArtifacts = artifacts.filter(a => a.status === "Active").length;
     return {
-      reply: "I'm the OGM Help Assistant. I can answer questions about offboarding cases, access artifacts, findings, remediation, and security policies. What would you like to know?",
+      reply: `I can help you with information about the OGM system. Here's a quick overview:\n\n- **${totalCases} offboarding cases** tracked\n- **${openFindings} open findings** requiring attention\n- **${activeArtifacts} active artifacts** across all cases\n\nTry asking about:\n- Cases and their statuses\n- Findings and severity levels\n- Access artifacts (tokens, ASPs)\n- Remediation actions\n- Audit logs\n- Settings and configuration\n- Employees\n- Scanning process`,
       sources: [
-        { title: "Documentation", url: "/docs" },
         { title: "Dashboard", url: "/dashboard" },
+        { title: "Documentation", url: "/docs" },
       ],
     };
   }

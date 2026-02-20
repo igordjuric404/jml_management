@@ -175,6 +175,12 @@ export class FrappeProvider implements HrProvider {
     return frappeGetDoc<Finding>("Finding", name);
   }
 
+  async remediateFinding(name: string): Promise<RemediationResult> {
+    return frappeCall<RemediationResult>("oauth_gap_monitor.api.remediate_finding", {
+      body: { finding_name: name },
+    });
+  }
+
   async getEmployeeList(): Promise<Employee[]> {
     return frappeCall<Employee[]>("oauth_gap_monitor.api.get_employee_list");
   }

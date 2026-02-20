@@ -33,6 +33,7 @@ import {
   FileText,
 } from "lucide-react";
 import { format } from "date-fns";
+import { confirmAction } from "@/components/confirm-dialog";
 import type {
   AccessArtifact,
   Finding,
@@ -126,9 +127,12 @@ export default function CaseDetailPage() {
   };
 
   const handleFullRemediation = () => {
-    if (confirm("Execute full remediation bundle? (Revoke tokens, delete ASPs, sign out)")) {
-      remediation.mutate({ action: "full_bundle" });
-    }
+    confirmAction({
+      title: "Execute Full Remediation",
+      description: "This will revoke all OAuth tokens, delete all ASPs, and sign out all sessions for this employee. This action cannot be undone.",
+      confirmLabel: "Execute Remediation",
+      onConfirm: () => remediation.mutate({ action: "full_bundle" }),
+    });
   };
 
   if (isLoading || !data) {
@@ -220,19 +224,21 @@ export default function CaseDetailPage() {
               )}
               Remediate (full bundle)
             </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => runScheduled.mutate()}
-              disabled={runScheduled.isPending}
-            >
-              {runScheduled.isPending ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                <Play className="mr-2 h-4 w-4" />
-              )}
-              Run Scheduled Now
-            </Button>
+            {c.status === "Scheduled" && c.scheduled_remediation_date && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => runScheduled.mutate()}
+                disabled={runScheduled.isPending}
+              >
+                {runScheduled.isPending ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Play className="mr-2 h-4 w-4" />
+                )}
+                Run Scheduled Now
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>

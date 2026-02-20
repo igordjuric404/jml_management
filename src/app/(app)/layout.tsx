@@ -1,5 +1,7 @@
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
+import { ChatWidget } from "@/components/chat-widget";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -11,6 +13,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           {children}
         </main>
       </div>
+      <ChatWidget />
+      <ConfirmDialog />
     </div>
   );
 }

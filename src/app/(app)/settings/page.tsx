@@ -17,10 +17,12 @@ import {
 import { Loader2 } from "lucide-react";
 
 const intervalOptions = [
-  { value: "hourly", label: "Hourly" },
-  { value: "every_6_hours", label: "Every 6 hours" },
-  { value: "daily", label: "Daily" },
-  { value: "weekly", label: "Weekly" },
+  { value: "Every 5 Minutes", label: "Every 5 Minutes" },
+  { value: "Every 15 Minutes", label: "Every 15 Minutes" },
+  { value: "Every 30 Minutes", label: "Every 30 Minutes" },
+  { value: "Every Hour", label: "Every Hour" },
+  { value: "Every 6 Hours", label: "Every 6 Hours" },
+  { value: "Daily", label: "Daily" },
 ];
 
 const remediationOptions = [
@@ -149,7 +151,7 @@ export default function SettingsPage() {
           <div className="space-y-2">
             <Label>Background scan interval</Label>
             <Select
-              value={form.background_scan_interval ?? "hourly"}
+              value={form.background_scan_interval ?? "Every Hour"}
               onValueChange={(v) => setStr("background_scan_interval", v)}
             >
               <SelectTrigger className="w-[200px]">
@@ -167,7 +169,7 @@ export default function SettingsPage() {
           <div className="space-y-2">
             <Label>Remediation check interval</Label>
             <Select
-              value={form.remediation_check_interval ?? "hourly"}
+              value={form.remediation_check_interval ?? "Every 5 Minutes"}
               onValueChange={(v) => setStr("remediation_check_interval", v)}
             >
               <SelectTrigger className="w-[200px]">

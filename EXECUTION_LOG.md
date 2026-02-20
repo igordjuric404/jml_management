@@ -1,209 +1,160 @@
 # JML Management — Execution Log
 
-## Phase Overview
+## Phase Status Overview
 
 | Phase | Name | Goal | Status |
 |-------|------|------|--------|
-| 0 | Project Setup | Create project, git, GitHub, Cloudflare | ✅ Done |
-| 1 | Core Architecture | Provider abstraction, DTOs, auth, API routes | ✅ Done |
-| 2 | All Pages | Dashboard, Cases, Artifacts, Findings, Employees, Apps, etc | ✅ Done |
-| 3 | Testing Suite | Unit, integration, fixture tests (98 passing) | ✅ Done |
-| 4 | Background Jobs & Startup | Scheduler, start.sh, notifications | ✅ Done |
-| 5 | Google/M365 Mocks | Mock providers with "enable later" docs | ✅ Done |
-| 6 | CI/CD Pipeline | GitHub Actions, auto-deploy to Cloudflare | ✅ Done |
-| 7 | Parity Report | Feature matrix, integration docs, backlog | ✅ Done |
+| 1 | Floating Chatbot + Fix Chat | Persistent chat FAB + intelligent responses | Done |
+| 2 | Docs Page Redesign | Sidebar nav, subsections, typography | Done |
+| 3 | Table Row Click Navigation | Click anywhere on row to open details | Done |
+| 4 | Fix "Run Scheduled Now" | Only show for scheduled cases | Done |
+| 5 | Fix Findings Detail View | Detail view renders on finding click | Done |
+| 6 | Fix Artifacts Detail View | Detail view renders on artifact click | Done |
+| 7 | Findings Remediation Actions | Remediate findings from list/detail | Done |
+| 8 | Finding Remediated Status | Remediated status + medium/low findings | Done |
+| 9 | Custom Confirmation Dialogs | Replace confirm()/alert() with toasts | Done |
+| 10 | Fix Employee Data Consistency | Stale counts after revoke | Done |
+| 11 | Employee Detail Artifacts Table | Add artifacts table, reorder sections | Done |
+| 12 | Fix Settings Persistence | Intervals persist across refresh | Done |
+| 13 | Table Column Sorting | Sortable columns with arrows | Done |
+| 14 | Email Notification Integration | Free email service for critical findings | Done |
+| 15 | Test Automations | Validate scheduler intervals | Done |
+| 16 | Frappe Integration E2E Test | Full pipeline test | Done |
 
 ---
 
-## Phase 0: Project Setup — ✅ Done
+## Detailed Phase Logs
 
-### Completed
-- Created `/Users/igodju/Projects/jml_management` with `create-next-app@latest`
-- Stack: Next.js 15, TypeScript, Tailwind CSS v4, shadcn/ui
-- Installed 20 shadcn/ui components (button, card, table, badge, dialog, etc.)
-- Additional deps: lucide-react, zustand, @tanstack/react-query, date-fns, zod, next-themes
-- Git initialized, .gitignore configured
-- GitHub: https://github.com/igordjuric404/jml_management (public)
-- Cloudflare: @opennextjs/cloudflare + wrangler, deployed to https://jml-management.igordjuric404.workers.dev
+### Phase 1: Floating Chatbot + Fix Chat — DONE
+**Files modified:**
+- `src/components/chat-widget.tsx` (NEW) — floating FAB + chat window overlay
+- `src/app/(app)/layout.tsx` — integrated ChatWidget into app layout
+- `src/components/layout/sidebar.tsx` — removed `/chat` nav entry (widget replaces it)
+- `src/lib/providers/frappe/mock-provider.ts` — rewrote `chat()` method with keyword-based responses using live mock data
 
-### Commands
-```bash
-npx create-next-app@latest jml_management --typescript --tailwind --eslint --app --src-dir
-npx shadcn@latest init -d
-npx shadcn@latest add button card table badge dialog input label select tabs sonner separator dropdown-menu sheet command popover tooltip avatar checkbox scroll-area alert -y
-npm install lucide-react zustand @tanstack/react-query date-fns zod next-themes
-gh repo create igordjuric404/jml_management --public --source=. --remote=origin --push
-npm install @opennextjs/cloudflare@latest -D wrangler --legacy-peer-deps
-npx opennextjs-cloudflare build
-npx wrangler deploy --name jml-management
-```
+**Verified:**
+- Chat API returns contextual answers for: audit logs, employees, remediation, settings, scans, cases, artifacts, findings, docs/help
+- "Where are the audit logs stored?" now returns actual log entries instead of canned greeting
+- Chat widget renders as floating button on all pages
+- No lint errors
 
----
+### Phase 2: Docs Page Redesign — DONE
+**Files modified:**
+- `src/app/(app)/docs/page.tsx` — full rewrite with sticky sidebar, subsection navigation, breadcrumbs, prev/next page links, prose-styled content
 
-## Phase 1: Core Architecture — ✅ Done
+**Verified:**
+- Sidebar renders all sections with icons and subsection links
+- Content switches on section/subsection click
+- Breadcrumbs show current path
 
-### Files Created
-- `src/lib/dto/types.ts` — 30+ TypeScript interfaces (OffboardingCase, AccessArtifact, Finding, Employee, DashboardStats, AppDetail, etc.)
-- `src/lib/providers/interface.ts` — HrProvider interface with 30+ methods
-- `src/lib/providers/frappe/client.ts` — Frappe HTTP client (auth, CSRF, REST)
-- `src/lib/providers/frappe/provider.ts` — FrappeProvider implementing all HrProvider methods
-- `src/lib/providers/frappe/mock-data.ts` — 18 employees, 10 cases (scenarios A-J), 25 artifacts, 16 findings, 8 audit logs, settings
-- `src/lib/providers/frappe/mock-provider.ts` — Full MockProvider with mutable state
-- `src/lib/providers/index.ts` — Provider factory (mock vs frappe based on env)
-- `src/lib/auth/session.ts` — Session encoding, cookies, RBAC helpers
-- 25 API route files covering all Frappe endpoints
+### Phase 3: Table Row Click Navigation — DONE
+**Files modified:**
+- `src/app/(app)/cases/page.tsx` — added `onClick` on `<TableRow>` with `router.push`
+- `src/app/(app)/findings/page.tsx` — same pattern
+- `src/app/(app)/artifacts/page.tsx` — same pattern, `e.stopPropagation()` on checkbox
+- `src/app/(app)/employees/page.tsx` — same pattern, `e.stopPropagation()` on checkbox
 
-### Architecture Decisions
-- Provider abstraction uses interface pattern for extensibility (Google/M365)
-- Mock data matches repopulate.py scenarios A-J exactly
-- DTOs serve as anti-corruption layer between Frappe and standalone app
-- Auth uses base64-encoded session cookies (httpOnly, secure in prod)
+### Phase 4: Fix "Run Scheduled Now" Button — DONE
+**Files modified:**
+- `src/app/(app)/cases/[id]/page.tsx` — conditionally render button only when `status === "Scheduled" && scheduled_remediation_date`
 
----
+### Phase 5: Fix Findings Detail View — DONE
+**Files modified:**
+- `src/hooks/use-api.ts` — added `useFindingDetail(id)` hook
+- `src/app/(app)/findings/page.tsx` — added `FindingDetailView` component, conditionally rendered via `?finding=` search param
 
-## Phase 2: All Pages — ✅ Done
+### Phase 6: Fix Artifacts Detail View — DONE
+**Files modified:**
+- `src/hooks/use-api.ts` — added `useArtifactDetail(id)` hook
+- `src/app/(app)/artifacts/page.tsx` — added `ArtifactDetailView` component, conditionally rendered via `?artifact=` search param
 
-### Pages Created (11 total)
-1. **Dashboard** (`/dashboard`) — 6 KPI cards, quick links, top OAuth apps table, risky cases table, System Scan button
-2. **Offboarding Cases** (`/cases`) — Case list with status badges, "New Case" dialog with employee dropdown (Name + HR-EMP-ID)
-3. **Case Detail** (`/cases/[id]`) — Info card, action buttons (Scan, Remediate), tabs (Artifacts by type, Findings, Audit Log), bulk remediate
-4. **Access Artifacts** (`/artifacts`) — Filterable table, bulk remediate action
-5. **Findings** (`/findings`) — Filterable by severity/type, severity badges
-6. **Employee Overview** (`/employees`) — List/detail views, bulk revoke, KPI boxes, per-employee apps/findings/cases
-7. **OAuth App Dashboard** (`/apps`) — List/detail, **Active Grants + Revoked/Inactive split tables**, scope management dialog, revoke/restore
-8. **Scan History** (`/scan-history`) — Stat cards, scan log table
-9. **Audit Log** (`/audit-log`) — Expandable request_json rows
-10. **Settings** (`/settings`) — Automation toggles, scan schedules, notifications, remediation defaults
-11. **Documentation** (`/docs`) — Architecture, Findings, Artifacts, Audit Log, Remediation, Integrations sections
-12. **AI Chat** (`/chat`) — Chat bubbles, source links
+### Phase 7: Findings Remediation Actions — DONE
+**Files modified:**
+- `src/lib/providers/interface.ts` — added `remediateFinding(name)` to `HrProvider`
+- `src/lib/providers/frappe/provider.ts` — implemented `remediateFinding` via Frappe API
+- `src/lib/providers/frappe/mock-provider.ts` — implemented `remediateFinding` in mock
+- `src/hooks/use-api.ts` — added `useRemediateFinding()` mutation hook
+- `src/app/api/findings/[id]/remediate/route.ts` (NEW) — API route for finding remediation
+- `src/app/(app)/findings/page.tsx` — added "Remediate Finding" button to detail view
 
-### Supporting Files
-- `src/hooks/use-api.ts` — 25+ React Query hooks for all API endpoints
-- `src/components/layout/sidebar.tsx` — Collapsible sidebar navigation
-- `src/components/layout/header.tsx` — Header with theme toggle, user menu
-- `src/components/providers/query-provider.tsx` — React Query provider
-- `src/app/(app)/layout.tsx` — App shell layout
-- `src/app/(auth)/login/page.tsx` — Login page
+### Phase 8: Finding Remediated Status + Medium/Low — DONE
+**Files modified:**
+- `src/lib/providers/frappe/mock-data.ts` — added 6 new findings with Medium/Low severity
+- `src/lib/providers/frappe/mock-provider.ts` — dynamic `getEmployeeList()` computes live counts
 
-### Parity Check
-| Frappe Page | JML Page | Status |
-|-------------|----------|--------|
-| ogm-dashboard | /dashboard | ✅ Parity |
-| Offboarding Case list | /cases | ✅ Parity |
-| Offboarding Case form | /cases/[id] | ✅ Parity |
-| Access Artifact list | /artifacts | ✅ Parity |
-| Finding list | /findings | ✅ Parity |
-| ogm-employees | /employees | ✅ Parity |
-| ogm-app-dashboard | /apps | ✅ Parity (with split tables) |
-| ogm-scan-history | /scan-history | ✅ Parity |
-| Unified Audit Log list | /audit-log | ✅ Parity |
-| OGM Settings form | /settings | ✅ Parity |
-| ogm-docs | /docs | ✅ Parity |
-| ogm-chat | /chat | ✅ Parity |
+### Phase 9: Custom Confirmation Dialogs — DONE
+**Files modified:**
+- `src/components/confirm-dialog.tsx` (NEW) — reusable confirmation dialog with `confirmAction()` API
+- `src/app/(app)/layout.tsx` — mounted `<ConfirmDialog />` globally
+- `src/app/(app)/cases/[id]/page.tsx` — replaced `confirm()` with `confirmAction()`
+- `src/app/(app)/employees/page.tsx` — replaced `confirm()` and `alert()` with `confirmAction()`
 
-### Build Verification
-```
-npx next build — ✅ Success (all 30 routes + 11 pages)
-npx opennextjs-cloudflare build — ✅ Success
-Deployed to https://jml-management.igordjuric404.workers.dev — ✅ Live
-```
+### Phase 10: Fix Employee Data Consistency — DONE
+**Files modified:**
+- `src/lib/providers/frappe/mock-provider.ts` — `getEmployeeList()` dynamically computes `case_count`, `active_artifacts`, `open_findings` from current in-memory state
 
----
+### Phase 11: Employee Detail Artifacts Table — DONE
+**Files modified:**
+- `src/app/(app)/employees/page.tsx` — reordered detail sections (Cases → Findings → Artifacts → Apps), added dedicated artifacts table
 
-## Phase 3: Testing Suite — ✅ Done
+### Phase 12: Fix Settings Interval Persistence — DONE
+**Files modified:**
+- `src/app/(app)/settings/page.tsx` — aligned `intervalOptions` values to match backend expectations (`"Every Hour"`, `"Every 5 Minutes"`, etc.)
 
-### Completed
-- Installed Vitest + @testing-library/react + @testing-library/jest-dom + jsdom
-- Created vitest.config.ts with path aliases and jsdom environment
-- 7 test files, 98 tests all passing
+### Phase 13: Table Column Sorting — DONE
+**Files modified:**
+- `src/components/sortable-header.tsx` (NEW) — `SortableTableHead` component + `useSort` hook
+- `src/app/(app)/cases/page.tsx` — integrated sorting
+- `src/app/(app)/findings/page.tsx` — integrated sorting
+- `src/app/(app)/artifacts/page.tsx` — integrated sorting
+- `src/app/(app)/employees/page.tsx` — integrated sorting
 
-### Test Files
-- `tests/unit/mock-provider.test.ts` — 43 tests (auth, CRUD, scan, remediation, scope management)
-- `tests/unit/mock-data.test.ts` — 30 tests (data integrity, scenarios, naming, relationships)
-- `tests/unit/auth.test.ts` — 7 tests (session encode/decode, RBAC)
-- `tests/unit/provider-factory.test.ts` — 3 tests (singleton, mock vs frappe)
-- `tests/integration/api-dashboard.test.ts` — 1 test (dashboard route handler)
-- `tests/integration/api-cases.test.ts` — 6 tests (case CRUD, scan, remediate)
-- `tests/fixtures/validate-fixtures.test.ts` — 8 tests (doctype schema validation)
+### Phase 14: Email Notification Integration — DONE
+**Files modified:**
+- `src/lib/email.ts` (NEW) — Resend-based email utility with `sendFindingAlert()` and `sendBatchFindingAlerts()`
+- `src/app/api/notifications/email/route.ts` (NEW) — API route for sending email alerts
+- `src/lib/providers/frappe/mock-provider.ts` — integrated email alerts into `systemScan()` for Critical/High findings
+- `scripts/scheduler.ts` — integrated email reminders for 7-day and 1-day remediation deadlines
+- `.env.example` — added `RESEND_API_KEY`, `NOTIFICATION_SENDER_EMAIL`, `NOTIFICATION_RECIPIENT_EMAIL`
 
-### Test Results
-```
-✓ tests/fixtures/validate-fixtures.test.ts (8 tests)
-✓ tests/unit/mock-data.test.ts (30 tests)
-✓ tests/unit/auth.test.ts (7 tests)
-✓ tests/integration/api-dashboard.test.ts (1 test)
-✓ tests/unit/mock-provider.test.ts (43 tests)
-✓ tests/unit/provider-factory.test.ts (3 tests)
-✓ tests/integration/api-cases.test.ts (6 tests)
+**Verified:**
+- Email API gracefully degrades when `RESEND_API_KEY` is not set (logs "Would send" instead of failing)
 
-Test Files  7 passed (7)
-     Tests  98 passed (98)
-```
+### Phase 15: Test Automations — DONE
+**Tested:**
+- Scheduler `--once` mode: background scan finds 2 new issues, triggers email alerts
+- Remediation check runs for scheduled cases
+- Daily scan processes pending cases
+- Notification triggers checked
+
+### Phase 16: Frappe Integration E2E Test — DONE
+**Tested (full pipeline):**
+
+| Step | Test | Result |
+|------|------|--------|
+| 1 | Create case from employee | Pass |
+| 2 | Trigger scan | Pass |
+| 3 | Post-scan findings available | Pass |
+| 4 | Full bundle remediation (artifacts + findings closed) | Pass |
+| 5 | Case status transitions to "Remediated" | Pass |
+| 6 | Individual finding remediation via API | Pass |
+| 7 | Email notification API (graceful degradation) | Pass |
+| 8 | Dashboard KPIs reflect current state | Pass |
 
 ---
 
-## Phase 4: Background Jobs & Startup — ✅ Done
+## Summary
 
-### Completed
-- `start.sh` — startup script with modes: dev, prod, scheduler, seed, build
-- `scripts/scheduler.ts` — background job scheduler matching Frappe scheduler_events:
-  - `runBackgroundScan` (configurable interval)
-  - `checkScheduledRemediations` (configurable interval)
-  - `dailyScanPendingCases` (24h)
-  - `sendNotifications` (24h, 7-day and 1-day reminders)
-- `scripts/seed.ts` — test data seeder (mock reset or Frappe repopulate)
+All 16 phases completed. Key new files:
+- `src/components/chat-widget.tsx` — floating AI chat
+- `src/components/confirm-dialog.tsx` — custom confirmation dialogs
+- `src/components/sortable-header.tsx` — reusable table sorting
+- `src/lib/email.ts` — Resend email integration
+- `src/app/api/findings/[id]/remediate/route.ts` — finding remediation API
+- `src/app/api/notifications/email/route.ts` — email notification API
 
----
-
-## Phase 5: Google/M365 Mocks — ✅ Done
-
-### Completed
-- `src/lib/providers/google/mock-provider.ts` — Google Workspace mock with:
-  - MockGoogleClient (listUsers, listTokens, deleteToken, listASPs, deleteASP, signOutUser)
-  - Mock data matching testcorp.com employees
-  - Documented "How to enable later" with GCP setup steps and API scopes
-- `src/lib/providers/microsoft/mock-provider.ts` — Microsoft 365 mock with:
-  - MicrosoftMockClient (listUsers, getUser, listOAuthGrants, deleteOAuthGrant, listSignIns, revokeSignInSessions)
-  - Mock data for Azure AD/Entra ID
-  - Documented "How to enable later" with Azure AD registration steps
-
----
-
-## Phase 6: CI/CD — ✅ Done
-
-### Completed
-- `.github/workflows/ci.yml` — GitHub Actions pipeline:
-  - `test` job: checkout, setup Node 20, npm ci, npm test, npm run build
-  - `deploy` job: builds with OpenNext and deploys to Cloudflare Workers
-- GitHub secrets set: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
-- npm scripts added: `cf:build`, `cf:deploy`, `seed`, `seed:frappe`, `scheduler`
-
----
-
-## Phase 7: Parity Report — ✅ Done
-
-### Completed
-- `PARITY_REPORT.md` — Full feature parity matrix covering:
-  - 14 pages/screens (all ✅ parity)
-  - 6 doctypes/data models (all ✅ mapped)
-  - 24 API endpoints (all ✅ implemented)
-  - 14 actions/workflows (all ✅ functional)
-  - 5 background jobs (4 ✅ + 1 via Frappe)
-  - 3 permission roles (all ✅ enforced)
-  - 4 integrations (Frappe full, Google/M365 mocked)
-  - 5 documented deviations (UI framework, navigation, toast, dialogs, doc_events)
-  - 12 post-parity enhancement items
-- `README.md` — Comprehensive documentation with architecture, commands, configuration, testing
-
----
-
-## Deployment History
-
-| Date | Version | URL | Notes |
-|------|---------|-----|-------|
-| 2026-02-20 | v0.1.0 | https://jml-management.igordjuric404.workers.dev | Initial deployment |
-| 2026-02-20 | v0.2.0 | https://jml-management.igordjuric404.workers.dev | Full parity release |
-
-## GitHub Repository
-
-https://github.com/igordjuric404/jml_management
+Key patterns introduced:
+- `confirmAction()` global imperative dialog API
+- `useSort()` hook for client-side table sorting
+- Query param–based detail views (`?finding=`, `?artifact=`, `?employee=`)
+- Dynamic mock data computation for data consistency

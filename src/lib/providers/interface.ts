@@ -60,6 +60,7 @@ export interface HrProvider {
   // Findings
   listFindings(filters?: Record<string, unknown>): Promise<Finding[]>;
   getFinding(name: string): Promise<Finding>;
+  remediateFinding(name: string): Promise<RemediationResult>;
 
   // Employees
   getEmployeeList(): Promise<Employee[]>;

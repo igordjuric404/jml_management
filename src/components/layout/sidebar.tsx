@@ -31,7 +31,6 @@ const navItems = [
   { href: "/audit-log", label: "Audit Log", icon: FileText },
   { href: "/settings", label: "Settings", icon: Settings },
   { href: "/docs", label: "Documentation", icon: BookOpen },
-  { href: "/chat", label: "AI Chat", icon: MessageCircle },
 ];
 
 export function Sidebar() {

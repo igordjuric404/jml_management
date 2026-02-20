@@ -35,8 +35,13 @@ import {
   User,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { confirmAction } from "@/components/confirm-dialog";
+import { SortableTableHead, useSort } from "@/components/sortable-header";
 
 function EmployeesPageContent() {
+  const router = useRouter();
+  const { sortConfig, onSort, sortData } = useSort();
   const searchParams = useSearchParams();
   const employeeParam = searchParams.get("employee");
   const emailParam = searchParams.get("email");
@@ -80,12 +85,17 @@ function EmployeesPageContent() {
 
   const handleRevokeAll = () => {
     if (selected.size === 0) return;
-    if (confirm("Revoke all access for selected employees?")) {
-      selected.forEach((id) => {
-        revokeAll.mutate("all", { onSuccess: () => {} });
-      });
-      setSelected(new Set());
-    }
+    confirmAction({
+      title: "Revoke All Access",
+      description: `Revoke all access for ${selected.size} selected employee(s)? This action cannot be undone.`,
+      confirmLabel: "Revoke All",
+      onConfirm: () => {
+        selected.forEach(() => {
+          revokeAll.mutate("all", { onSuccess: () => {} });
+        });
+        setSelected(new Set());
+      },
+    });
   };
 
   const showDetail = !!detailEmployeeId && (loadingDetail || detail);
@@ -111,9 +121,12 @@ function EmployeesPageContent() {
           <Button
             variant="destructive"
             onClick={() => {
-              if (confirm("Revoke all access for this employee?")) {
-                revokeAll.mutate("all");
-              }
+              confirmAction({
+                title: "Revoke All Access",
+                description: `Revoke all access for ${detail.employee.name}? This will remediate all cases and close all findings. This action cannot be undone.`,
+                confirmLabel: "Revoke All Access",
+                onConfirm: () => revokeAll.mutate("all"),
+              });
             }}
             disabled={revokeAll.isPending}
           >
@@ -207,6 +220,139 @@ function EmployeesPageContent() {
 
         <Card>
           <CardHeader>
+            <CardTitle className="text-base">Associated Cases</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Case</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Effective Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {detail.cases?.map((c) => (
+                  <TableRow key={c.name}>
+                    <TableCell>
+                      <Link
+                        href={`/cases/${c.name}`}
+                        className="text-primary hover:underline font-medium"
+                      >
+                        {c.name}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">{c.status}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      {c.effective_date
+                        ? new Date(c.effective_date).toLocaleDateString()
+                        : "-"}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Findings</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Severity</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Summary</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {detail.findings?.map((f) => (
+                  <TableRow key={f.name}>
+                    <TableCell>
+                      <Link
+                        href={`/findings?finding=${encodeURIComponent(f.name)}`}
+                        className="text-primary hover:underline font-medium"
+                      >
+                        {f.name}
+                      </Link>
+                    </TableCell>
+                    <TableCell>{f.finding_type}</TableCell>
+                    <TableCell>
+                      <Badge variant="destructive">{f.severity}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={f.closed_at ? "secondary" : "default"}>
+                        {f.closed_at ? "Closed" : "Open"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="max-w-xs truncate">
+                      {f.summary}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Access Artifacts</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>App</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Risk</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {detail.artifacts?.map((a) => (
+                  <TableRow key={a.name}>
+                    <TableCell>
+                      <Link
+                        href={`/artifacts?artifact=${encodeURIComponent(a.name)}`}
+                        className="text-primary hover:underline font-medium"
+                      >
+                        {a.name}
+                      </Link>
+                    </TableCell>
+                    <TableCell>{a.artifact_type}</TableCell>
+                    <TableCell>{a.app_display_name || "-"}</TableCell>
+                    <TableCell>
+                      <Badge variant={a.status === "Active" ? "destructive" : "secondary"}>
+                        {a.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {a.risk_level ? (
+                        <Badge variant={a.risk_level === "Critical" || a.risk_level === "High" ? "destructive" : "default"}>
+                          {a.risk_level}
+                        </Badge>
+                      ) : (
+                        "-"
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
             <CardTitle className="text-base">Applications</CardTitle>
           </CardHeader>
           <CardContent>
@@ -249,84 +395,6 @@ function EmployeesPageContent() {
             </Table>
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Findings</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Severity</TableHead>
-                  <TableHead>Summary</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {detail.findings?.map((f) => (
-                  <TableRow key={f.name}>
-                    <TableCell>
-                      <Link
-                        href={`/findings?finding=${encodeURIComponent(f.name)}`}
-                        className="text-primary hover:underline font-medium"
-                      >
-                        {f.name}
-                      </Link>
-                    </TableCell>
-                    <TableCell>{f.finding_type}</TableCell>
-                    <TableCell>
-                      <Badge variant="destructive">{f.severity}</Badge>
-                    </TableCell>
-                    <TableCell className="max-w-xs truncate">
-                      {f.summary}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Associated Cases</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Case</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Effective Date</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {detail.cases?.map((c) => (
-                  <TableRow key={c.name}>
-                    <TableCell>
-                      <Link
-                        href={`/cases/${c.name}`}
-                        className="text-primary hover:underline font-medium"
-                      >
-                        {c.name}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary">{c.status}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      {c.effective_date
-                        ? new Date(c.effective_date).toLocaleDateString()
-                        : "-"}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
       </div>
     );
   }
@@ -350,12 +418,17 @@ function EmployeesPageContent() {
           <DropdownMenuContent>
             <DropdownMenuItem
               onClick={() => {
-                if (confirm("Revoke all access for selected employees?")) {
-                  selected.forEach((id) => {
-                    // Would need per-employee revoke - for now show message
-                    alert("Use Revoke All from employee detail view");
-                  });
-                }
+                confirmAction({
+                  title: "Revoke All Access",
+                  description: `This will revoke all access for ${selected.size} selected employee(s). Please use the employee detail view for per-employee control.`,
+                  confirmLabel: "Revoke All",
+                  onConfirm: () => {
+                    selected.forEach(() => {
+                      revokeAll.mutate("all");
+                    });
+                    setSelected(new Set());
+                  },
+                });
               }}
             >
               <Shield className="mr-2 h-4 w-4" />
@@ -390,19 +463,25 @@ function EmployeesPageContent() {
                     onCheckedChange={toggleAll}
                   />
                 </TableHead>
-                <TableHead>Employee</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Cases</TableHead>
-                <TableHead>Active Artifacts</TableHead>
-                <TableHead>Open Findings</TableHead>
+                <SortableTableHead column="employee_name" label="Employee" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="company_email" label="Email" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="emp_status" label="Status" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="case_count" label="Cases" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="active_artifacts" label="Active Artifacts" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="open_findings" label="Open Findings" sortConfig={sortConfig} onSort={onSort} />
                 <TableHead></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {employees?.map((emp) => (
-                <TableRow key={emp.employee_id}>
-                  <TableCell>
+              {(employees ? sortData(employees as unknown as Record<string, unknown>[]) : []).map((raw) => {
+                const emp = raw as unknown as import("@/lib/dto/types").Employee;
+                return (
+                <TableRow
+                  key={emp.employee_id}
+                  className="cursor-pointer"
+                  onClick={() => router.push(`/employees?employee=${encodeURIComponent(emp.employee_id)}`)}
+                >
+                  <TableCell onClick={(e) => e.stopPropagation()}>
                     <Checkbox
                       checked={selected.has(emp.employee_id)}
                       onCheckedChange={() => toggleOne(emp.employee_id)}
@@ -450,7 +529,8 @@ function EmployeesPageContent() {
                     </Link>
                   </TableCell>
                 </TableRow>
-              ))}
+                );
+              })}
             </TableBody>
           </Table>
         </CardContent>

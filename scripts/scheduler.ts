@@ -13,6 +13,7 @@
  */
 
 import { getProvider } from "../src/lib/providers";
+import { sendFindingAlert } from "../src/lib/email";
 
 const INTERVAL_MS: Record<string, number> = {
   "Every 5 Minutes": 5 * 60 * 1000,
@@ -123,14 +124,28 @@ async function sendNotifications() {
       if (daysUntil <= 7 && daysUntil > 6 && !c.notify_user_1w) {
         console.log(`  [7-day reminder] ${c.name}: ${c.primary_email}`);
         if (settings.notification_email) {
-          console.log(`    Would email ${settings.notification_email}`);
+          await sendFindingAlert({
+            findingName: `${c.name}-7d-reminder`,
+            severity: "High",
+            findingType: "ScheduledRemediation",
+            summary: `Scheduled remediation for ${c.employee_name} (${c.primary_email}) is due in 7 days.`,
+            caseName: c.name,
+            employeeEmail: c.primary_email,
+          }, settings.notification_email).catch(err => console.error(`    Email error: ${err}`));
         }
       }
 
       if (daysUntil <= 1 && daysUntil > 0 && !c.notify_user_1d) {
         console.log(`  [1-day reminder] ${c.name}: ${c.primary_email}`);
         if (settings.notification_email) {
-          console.log(`    Would email ${settings.notification_email}`);
+          await sendFindingAlert({
+            findingName: `${c.name}-1d-reminder`,
+            severity: "Critical",
+            findingType: "ScheduledRemediation",
+            summary: `Scheduled remediation for ${c.employee_name} (${c.primary_email}) is due tomorrow!`,
+            caseName: c.name,
+            employeeEmail: c.primary_email,
+          }, settings.notification_email).catch(err => console.error(`    Email error: ${err}`));
         }
       }
     }

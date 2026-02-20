@@ -205,6 +205,39 @@ export function useFindings(filters?: Record<string, string>) {
   });
 }
 
+export function useFindingDetail(id: string) {
+  return useQuery<Finding>({
+    queryKey: ["findings", "detail", id],
+    queryFn: () => apiFetch(`/api/findings/${encodeURIComponent(id)}`),
+    enabled: !!id,
+  });
+}
+
+export function useRemediateFinding() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (findingId: string) =>
+      apiPost<RemediationResult>(`/api/findings/${encodeURIComponent(findingId)}/remediate`, {}),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["findings"] });
+      qc.invalidateQueries({ queryKey: ["cases"] });
+      qc.invalidateQueries({ queryKey: ["dashboard"] });
+      qc.invalidateQueries({ queryKey: ["employees"] });
+      toast.success("Finding remediated");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+}
+
+// ── Artifact Detail ─────────────────────────────────────────
+export function useArtifactDetail(id: string) {
+  return useQuery<AccessArtifact>({
+    queryKey: ["artifacts", "detail", id],
+    queryFn: () => apiFetch(`/api/artifacts/${encodeURIComponent(id)}`),
+    enabled: !!id,
+  });
+}
+
 // ── Employees ──────────────────────────────────────────────
 export function useEmployees() {
   return useQuery<Employee[]>({

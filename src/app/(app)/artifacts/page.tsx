@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useMemo, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import {
   useArtifacts,
   useRemediateArtifacts,
+  useArtifactDetail,
 } from "@/hooks/use-api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,9 +26,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Loader2, Lock } from "lucide-react";
+import { Loader2, Lock, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
+import { SortableTableHead, useSort } from "@/components/sortable-header";
 
 const artifactTypes = ["OAuthToken", "ASP", "LoginEvent", "AdminMFA", "DWDChange"];
 const statuses = ["Active", "Hidden", "Revoked", "Deleted", "Acknowledged"];
@@ -53,8 +55,168 @@ const riskVariant: Record<
   Low: "secondary",
 };
 
+function ArtifactDetailView({ artifactId }: { artifactId: string }) {
+  const { data: artifact, isLoading } = useArtifactDetail(artifactId);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (!artifact) {
+    return (
+      <div className="space-y-4">
+        <Link href="/artifacts">
+          <Button variant="outline" size="sm">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Artifacts
+          </Button>
+        </Link>
+        <p className="text-muted-foreground">Artifact not found: {artifactId}</p>
+      </div>
+    );
+  }
+
+  const scopes: string[] = artifact.scopes_json ? JSON.parse(artifact.scopes_json) : [];
+  const metadata = artifact.metadata_json ? JSON.parse(artifact.metadata_json) : null;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <Link href="/artifacts">
+          <Button variant="outline" size="sm">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Artifacts
+          </Button>
+        </Link>
+      </div>
+
+      <div>
+        <h1 className="text-2xl font-bold">{artifact.name}</h1>
+        <p className="text-muted-foreground">Artifact detail</p>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Artifact Info</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div>
+              <span className="text-muted-foreground">Type</span>
+              <p className="font-medium">{artifact.artifact_type}</p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Status</span>
+              <p>
+                <Badge variant={statusVariant[artifact.status] ?? "secondary"}>
+                  {artifact.status}
+                </Badge>
+              </p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Risk Level</span>
+              <p>
+                {artifact.risk_level ? (
+                  <Badge variant={riskVariant[artifact.risk_level] ?? "secondary"}>
+                    {artifact.risk_level}
+                  </Badge>
+                ) : (
+                  "-"
+                )}
+              </p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Case</span>
+              <p>
+                {artifact.case ? (
+                  <Link href={`/cases/${artifact.case}`} className="text-primary hover:underline">
+                    {artifact.case}
+                  </Link>
+                ) : (
+                  "-"
+                )}
+              </p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Subject Email</span>
+              <p>
+                <Link
+                  href={`/employees?email=${encodeURIComponent(artifact.subject_email)}`}
+                  className="text-primary hover:underline"
+                >
+                  {artifact.subject_email}
+                </Link>
+              </p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">App</span>
+              <p>
+                {artifact.client_id ? (
+                  <Link
+                    href={`/apps?client_id=${encodeURIComponent(artifact.client_id)}`}
+                    className="text-primary hover:underline"
+                  >
+                    {artifact.app_display_name || artifact.client_id}
+                  </Link>
+                ) : (
+                  artifact.app_display_name || "-"
+                )}
+              </p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Created</span>
+              <p>{artifact.creation ? format(new Date(artifact.creation), "PPp") : "-"}</p>
+            </div>
+            <div>
+              <span className="text-muted-foreground">Last Modified</span>
+              <p>{artifact.modified ? format(new Date(artifact.modified), "PPp") : "-"}</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {scopes.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">OAuth Scopes</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              {scopes.map((scope) => (
+                <Badge key={scope} variant="outline" className="text-xs font-mono">
+                  {scope}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {metadata && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Metadata</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <pre className="text-sm bg-muted rounded-md p-4 overflow-x-auto">
+              {JSON.stringify(metadata, null, 2)}
+            </pre>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
+
 function ArtifactsPageContent() {
+  const router = useRouter();
+  const { sortConfig, onSort, sortData } = useSort();
   const searchParams = useSearchParams();
+  const artifactParam = searchParams.get("artifact");
   const [filterType, setFilterType] = useState<string>(
     searchParams.get("type") ?? "all"
   );
@@ -100,6 +262,10 @@ function ArtifactsPageContent() {
     if (names.length === 0) return;
     remediate.mutate(names, { onSuccess: () => setSelected(new Set()) });
   };
+
+  if (artifactParam) {
+    return <ArtifactDetailView artifactId={artifactParam} />;
+  }
 
   if (isLoading) {
     return (
@@ -179,20 +345,26 @@ function ArtifactsPageContent() {
                     onCheckedChange={toggleAll}
                   />
                 </TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Case</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Subject Email</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>App Name</TableHead>
-                <TableHead>Risk Level</TableHead>
-                <TableHead>Created</TableHead>
+                <SortableTableHead column="name" label="Name" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="case" label="Case" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="artifact_type" label="Type" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="subject_email" label="Subject Email" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="status" label="Status" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="app_display_name" label="App Name" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="risk_level" label="Risk Level" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="creation" label="Created" sortConfig={sortConfig} onSort={onSort} />
               </TableRow>
             </TableHeader>
             <TableBody>
-              {artifacts?.map((a) => (
-                <TableRow key={a.name}>
-                  <TableCell>
+              {(artifacts ? sortData(artifacts as unknown as Record<string, unknown>[]) : []).map((raw) => {
+                const a = raw as unknown as import("@/lib/dto/types").AccessArtifact;
+                return (
+                <TableRow
+                  key={a.name}
+                  className="cursor-pointer"
+                  onClick={() => router.push(`/artifacts?artifact=${encodeURIComponent(a.name)}`)}
+                >
+                  <TableCell onClick={(e) => e.stopPropagation()}>
                     {a.status === "Active" && (
                       <Checkbox
                         checked={selected.has(a.name)}
@@ -204,6 +376,7 @@ function ArtifactsPageContent() {
                     <Link
                       href={`/artifacts?artifact=${encodeURIComponent(a.name)}`}
                       className="text-primary hover:underline"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       {a.name}
                     </Link>
@@ -212,6 +385,7 @@ function ArtifactsPageContent() {
                     <Link
                       href={`/cases/${a.case}`}
                       className="text-primary hover:underline"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       {a.case}
                     </Link>
@@ -221,6 +395,7 @@ function ArtifactsPageContent() {
                     <Link
                       href={`/employees?email=${encodeURIComponent(a.subject_email)}`}
                       className="text-primary hover:underline"
+                      onClick={(e) => e.stopPropagation()}
                     >
                       {a.subject_email}
                     </Link>
@@ -235,6 +410,7 @@ function ArtifactsPageContent() {
                       <Link
                         href={`/apps?client_id=${encodeURIComponent(a.client_id)}`}
                         className="text-primary hover:underline"
+                        onClick={(e) => e.stopPropagation()}
                       >
                         {a.app_display_name || a.client_id}
                       </Link>
@@ -257,7 +433,8 @@ function ArtifactsPageContent() {
                       : "-"}
                   </TableCell>
                 </TableRow>
-              ))}
+                );
+              })}
             </TableBody>
           </Table>
         </CardContent>

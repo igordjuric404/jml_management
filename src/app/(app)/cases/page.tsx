@@ -33,7 +33,9 @@ import {
 } from "@/components/ui/select";
 import { Loader2, Plus } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { format } from "date-fns";
+import { SortableTableHead, useSort } from "@/components/sortable-header";
 
 const statusVariant: Record<
   string,
@@ -63,6 +65,8 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function CasesPage() {
+  const router = useRouter();
+  const { sortConfig, onSort, sortData } = useSort();
   const { data: cases, isLoading } = useCases();
   const { data: employees } = useEmployees();
   const createCase = useCreateCaseFromEmployee();
@@ -110,55 +114,62 @@ export default function CasesPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Case ID</TableHead>
-                <TableHead>Employee</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Event Type</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Effective Date</TableHead>
-                <TableHead>Scheduled Remediation</TableHead>
+                <SortableTableHead column="name" label="Case ID" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="employee_name" label="Employee" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="primary_email" label="Email" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="event_type" label="Event Type" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="status" label="Status" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="effective_date" label="Effective Date" sortConfig={sortConfig} onSort={onSort} />
+                <SortableTableHead column="scheduled_remediation_date" label="Scheduled Remediation" sortConfig={sortConfig} onSort={onSort} />
               </TableRow>
             </TableHeader>
             <TableBody>
-              {cases?.map((c) => (
-                <TableRow key={c.name}>
+              {(cases ? sortData(cases as Record<string, unknown>[]) : []).map((c) => (
+                <TableRow
+                  key={c.name as string}
+                  className="cursor-pointer"
+                  onClick={() => router.push(`/cases/${c.name}`)}
+                >
                   <TableCell className="font-medium">
                     <Link
                       href={`/cases/${c.name}`}
                       className="text-primary hover:underline"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      {c.name}
+                      {c.name as string}
                     </Link>
                   </TableCell>
                   <TableCell>
                     <Link
-                      href={`/employees?employee=${encodeURIComponent(c.employee)}`}
+                      href={`/employees?employee=${encodeURIComponent(c.employee as string)}`}
                       className="text-primary hover:underline"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      {c.employee_name}
+                      {c.employee_name as string}
                     </Link>
                   </TableCell>
                   <TableCell>
                     <Link
-                      href={`/employees?email=${encodeURIComponent(c.primary_email)}`}
+                      href={`/employees?email=${encodeURIComponent(c.primary_email as string)}`}
                       className="text-primary hover:underline"
+                      onClick={(e) => e.stopPropagation()}
                     >
-                      {c.primary_email}
+                      {c.primary_email as string}
                     </Link>
                   </TableCell>
-                  <TableCell>{c.event_type}</TableCell>
+                  <TableCell>{c.event_type as string}</TableCell>
                   <TableCell>
-                    <StatusBadge status={c.status} />
+                    <StatusBadge status={c.status as string} />
                   </TableCell>
                   <TableCell>
                     {c.effective_date
-                      ? format(new Date(c.effective_date), "PP")
+                      ? format(new Date(c.effective_date as string), "PP")
                       : "-"}
                   </TableCell>
                   <TableCell>
                     {c.scheduled_remediation_date
                       ? format(
-                          new Date(c.scheduled_remediation_date),
+                          new Date(c.scheduled_remediation_date as string),
                           "PP"
                         )
                       : "-"}
