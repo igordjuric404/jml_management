@@ -406,7 +406,7 @@ describe("MockProvider", () => {
 
     it("returns generic reply for unrelated message", async () => {
       const result = await provider.chat("Hello");
-      expect(result.reply).toContain("OGM Help Assistant");
+      expect(result.reply).toContain("OGM system");
     });
   });
 });

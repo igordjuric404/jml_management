@@ -124,7 +124,7 @@ export default function CasesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {(cases ? sortData(cases as Record<string, unknown>[]) : []).map((c) => (
+              {(cases ? sortData(cases as unknown as Record<string, unknown>[]) : []).map((c) => (
                 <TableRow
                   key={c.name as string}
                   className="cursor-pointer"

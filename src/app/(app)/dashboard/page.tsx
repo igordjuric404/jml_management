@@ -12,6 +12,7 @@ import {
   History, FileText, Search, RefreshCw, Loader2, Lock,
 } from "lucide-react";
 import Link from "next/link";
+import { confirmAction } from "@/components/confirm-dialog";
 
 const quickLinks = [
   { label: "Offboarding Cases", href: "/cases", icon: FolderOpen },
@@ -52,9 +53,12 @@ export default function DashboardPage() {
           <Button
             size="sm"
             onClick={() => {
-              if (confirm("Run a system-wide scan to discover new lingering access?")) {
-                systemScan.mutate();
-              }
+              confirmAction({
+                title: "System Scan",
+                description: "Run a system-wide scan to discover new lingering access? This will check all employees for hidden artifacts.",
+                confirmLabel: "Run Scan",
+                onConfirm: () => systemScan.mutate(),
+              });
             }}
             disabled={systemScan.isPending}
           >

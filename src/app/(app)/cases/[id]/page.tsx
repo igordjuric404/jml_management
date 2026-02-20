@@ -9,6 +9,7 @@ import {
   useRemediation,
   useRunScheduledRemediation,
   useBulkRemediate,
+  useUpdateCase,
 } from "@/hooks/use-api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -23,14 +24,15 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Loader2,
   Search,
   Shield,
   Play,
   Lock,
-  AlertTriangle,
-  FileText,
+  Calendar,
 } from "lucide-react";
 import { format } from "date-fns";
 import { confirmAction } from "@/components/confirm-dialog";
@@ -88,9 +90,12 @@ export default function CaseDetailPage() {
   const remediation = useRemediation(id);
   const runScheduled = useRunScheduledRemediation(id);
   const bulkRemediate = useBulkRemediate(id);
+  const updateCase = useUpdateCase(id);
   const [selectedArtifacts, setSelectedArtifacts] = useState<Set<string>>(
     new Set()
   );
+  const [editingSchedule, setEditingSchedule] = useState(false);
+  const [scheduleDate, setScheduleDate] = useState("");
 
   const allArtifacts = useMemo(
     () => (data?.artifacts ? getAllArtifacts(data.artifacts) : []),
@@ -222,13 +227,20 @@ export default function CaseDetailPage() {
               ) : (
                 <Shield className="mr-2 h-4 w-4" />
               )}
-              Remediate (full bundle)
+              Remediate
             </Button>
-            {c.status === "Scheduled" && c.scheduled_remediation_date && (
+            {c.scheduled_remediation_date && (
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => runScheduled.mutate()}
+                onClick={() => {
+                  confirmAction({
+                    title: "Run Scheduled Remediation Now",
+                    description: `Execute the scheduled remediation for ${c.employee_name} immediately? This will perform a full remediation bundle.`,
+                    confirmLabel: "Run Now",
+                    onConfirm: () => runScheduled.mutate(),
+                  });
+                }}
                 disabled={runScheduled.isPending}
               >
                 {runScheduled.isPending ? (
@@ -239,6 +251,73 @@ export default function CaseDetailPage() {
                 Run Scheduled Now
               </Button>
             )}
+          </div>
+
+          <div className="pt-4 border-t space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <Label className="text-sm font-medium">Scheduled Remediation</Label>
+                <p className="text-xs text-muted-foreground">
+                  {c.scheduled_remediation_date
+                    ? `Scheduled for ${format(new Date(c.scheduled_remediation_date), "PPp")}`
+                    : "No scheduled date set"}
+                </p>
+              </div>
+              {!editingSchedule ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    setEditingSchedule(true);
+                    setScheduleDate(
+                      c.scheduled_remediation_date
+                        ? new Date(c.scheduled_remediation_date).toISOString().slice(0, 16)
+                        : ""
+                    );
+                  }}
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  {c.scheduled_remediation_date ? "Edit Schedule" : "Set Schedule"}
+                </Button>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="datetime-local"
+                    value={scheduleDate}
+                    onChange={(e) => setScheduleDate(e.target.value)}
+                    className="h-8 text-sm w-52"
+                  />
+                  <Button
+                    size="sm"
+                    disabled={!scheduleDate || updateCase.isPending}
+                    onClick={() => {
+                      updateCase.mutate(
+                        {
+                          scheduled_remediation_date: new Date(scheduleDate).toISOString(),
+                          status: "Scheduled",
+                        },
+                        {
+                          onSuccess: () => setEditingSchedule(false),
+                        }
+                      );
+                    }}
+                  >
+                    {updateCase.isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      "Save"
+                    )}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setEditingSchedule(false)}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>

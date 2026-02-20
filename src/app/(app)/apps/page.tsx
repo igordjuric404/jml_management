@@ -45,6 +45,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import type { AppUser } from "@/lib/dto/types";
+import { confirmAction } from "@/components/confirm-dialog";
 
 function AppsPageContent() {
   const searchParams = useSearchParams();
@@ -144,16 +145,17 @@ function AppsPageContent() {
 
   const handleGlobalRemoval = () => {
     if (!clientIdParam || !detail) return;
-    if (
-      confirm(
-        `Revoke this app globally for ALL users? This will revoke ${detail.active_grants} grant(s).`
-      )
-    ) {
-      globalRemoval.mutate({
-        clientId: clientIdParam,
-        appName: detail.app_name,
-      });
-    }
+    confirmAction({
+      title: "Global App Removal",
+      description: `Revoke this app globally for ALL users? This will revoke ${detail.active_grants} grant(s). This action cannot be undone.`,
+      confirmLabel: "Revoke All",
+      onConfirm: () => {
+        globalRemoval.mutate({
+          clientId: clientIdParam,
+          appName: detail.app_name,
+        });
+      },
+    });
   };
 
   const showDetail = !!clientIdParam && (loadingDetail || detail);

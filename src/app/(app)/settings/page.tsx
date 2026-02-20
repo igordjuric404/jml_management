@@ -88,11 +88,19 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">OGM Settings</h1>
-        <p className="text-muted-foreground">
-          Configure automation, scanning, and remediation behavior
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">OGM Settings</h1>
+          <p className="text-muted-foreground">
+            Configure automation, scanning, and remediation behavior
+          </p>
+        </div>
+        <Button onClick={handleSave} disabled={updateSettings.isPending}>
+          {updateSettings.isPending ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : null}
+          Save Settings
+        </Button>
       </div>
 
       <Card>
@@ -246,14 +254,6 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      <div className="flex justify-end">
-        <Button onClick={handleSave} disabled={updateSettings.isPending}>
-          {updateSettings.isPending ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : null}
-          Save
-        </Button>
-      </div>
     </div>
   );
 }

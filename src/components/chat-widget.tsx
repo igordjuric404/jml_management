@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useChatMutation } from "@/hooks/use-api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Send, MessageCircle, X, Minus } from "lucide-react";
-import Link from "next/link";
+import { Loader2, Send, MessageCircle, X, Minus, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+const STORAGE_KEY = "ogm-chat-messages";
 
 interface Message {
   role: "user" | "assistant";
@@ -13,19 +15,51 @@ interface Message {
   sources?: { title: string; url: string }[];
 }
 
+function loadMessages(): Message[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveMessages(messages: Message[]) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+  } catch {}
+}
+
 export function ChatWidget() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(loadMessages);
   const [input, setInput] = useState("");
   const bottomRef = useRef<HTMLDivElement>(null);
   const chatMutation = useChatMutation();
+
+  useEffect(() => {
+    saveMessages(messages);
+  }, [messages]);
 
   useEffect(() => {
     if (isOpen && !isMinimized) {
       bottomRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, isOpen, isMinimized]);
+
+  const handleClear = useCallback(() => {
+    setMessages([]);
+    localStorage.removeItem(STORAGE_KEY);
+  }, []);
+
+  const handleSourceClick = useCallback((url: string) => {
+    if (url.startsWith("/")) {
+      router.push(url);
+    }
+  }, [router]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,6 +136,14 @@ export function ChatWidget() {
         </div>
         <div className="flex items-center gap-1">
           <button
+            onClick={handleClear}
+            className="rounded-full p-1.5 hover:bg-primary-foreground/20"
+            aria-label="Clear chat"
+            title="Clear chat"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+          <button
             onClick={() => setIsMinimized(true)}
             className="rounded-full p-1.5 hover:bg-primary-foreground/20"
             aria-label="Minimize chat"
@@ -143,13 +185,13 @@ export function ChatWidget() {
                   <p className="text-xs font-medium mb-1">Sources:</p>
                   <div className="flex flex-wrap gap-1">
                     {m.sources.map((s, j) => (
-                      <Link
+                      <button
                         key={j}
-                        href={s.url}
-                        className="text-xs text-primary hover:underline underline-offset-2"
+                        onClick={() => handleSourceClick(s.url)}
+                        className="text-xs text-primary hover:underline underline-offset-2 cursor-pointer"
                       >
                         {s.title}
-                      </Link>
+                      </button>
                     ))}
                   </div>
                 </div>

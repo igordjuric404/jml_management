@@ -134,6 +134,14 @@
       "namedRegex": "^/api/findings/(?<nxtPid>[^/]+?)(?:/)?$"
     },
     {
+      "page": "/api/findings/[id]/remediate",
+      "regex": "^/api/findings/([^/]+?)/remediate(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/api/findings/(?<nxtPid>[^/]+?)/remediate(?:/)?$"
+    },
+    {
       "page": "/cases/[id]",
       "regex": "^/cases/([^/]+?)(?:/)?$",
       "routeKeys": {
@@ -226,6 +234,12 @@
       "regex": "^/api/findings(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/api/findings(?:/)?$"
+    },
+    {
+      "page": "/api/notifications/email",
+      "regex": "^/api/notifications/email(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/notifications/email(?:/)?$"
     },
     {
       "page": "/api/scan",

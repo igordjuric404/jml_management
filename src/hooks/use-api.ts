@@ -99,13 +99,30 @@ export function useCreateCaseFromEmployee() {
   });
 }
 
+export function useUpdateCase(caseId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Partial<OffboardingCase>) =>
+      apiPatch<OffboardingCase>(`/api/cases/${caseId}`, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["cases"] });
+      toast.success("Case updated");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+}
+
 export function useTriggerScan(caseId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: () => apiPost(`/api/cases/${caseId}/scan`, {}),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["cases", caseId] });
+      qc.invalidateQueries({ queryKey: ["cases"] });
       qc.invalidateQueries({ queryKey: ["dashboard"] });
+      qc.invalidateQueries({ queryKey: ["artifacts"] });
+      qc.invalidateQueries({ queryKey: ["findings"] });
+      qc.invalidateQueries({ queryKey: ["employees"] });
+      qc.invalidateQueries({ queryKey: ["scan-history"] });
       toast.success("Scan triggered");
     },
     onError: (e: Error) => toast.error(e.message),
@@ -119,8 +136,10 @@ export function useRemediation(caseId: string) {
       apiPost<RemediationResult>(`/api/cases/${caseId}/remediate`, params),
     onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: ["cases"] });
-      qc.invalidateQueries({ queryKey: ["cases", caseId] });
       qc.invalidateQueries({ queryKey: ["dashboard"] });
+      qc.invalidateQueries({ queryKey: ["artifacts"] });
+      qc.invalidateQueries({ queryKey: ["findings"] });
+      qc.invalidateQueries({ queryKey: ["employees"] });
       toast.success(`Remediation completed: ${data.artifacts_remediated || data.revoked || data.deleted || 0} item(s)`);
     },
     onError: (e: Error) => toast.error(e.message),
@@ -133,9 +152,11 @@ export function useRunScheduledRemediation(caseId: string) {
     mutationFn: () =>
       apiPost<RemediationResult>(`/api/cases/${caseId}/scheduled-remediation`, {}),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["cases", caseId] });
       qc.invalidateQueries({ queryKey: ["cases"] });
       qc.invalidateQueries({ queryKey: ["dashboard"] });
+      qc.invalidateQueries({ queryKey: ["artifacts"] });
+      qc.invalidateQueries({ queryKey: ["findings"] });
+      qc.invalidateQueries({ queryKey: ["employees"] });
       toast.success("Scheduled remediation completed");
     },
     onError: (e: Error) => toast.error(e.message),
@@ -150,9 +171,11 @@ export function useBulkRemediate(caseId: string) {
         artifact_names: artifactNames,
       }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["cases", caseId] });
       qc.invalidateQueries({ queryKey: ["cases"] });
       qc.invalidateQueries({ queryKey: ["dashboard"] });
+      qc.invalidateQueries({ queryKey: ["artifacts"] });
+      qc.invalidateQueries({ queryKey: ["findings"] });
+      qc.invalidateQueries({ queryKey: ["employees"] });
       toast.success("Bulk remediation completed");
     },
     onError: (e: Error) => toast.error(e.message),
@@ -166,7 +189,11 @@ export function useSystemScan() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["dashboard"] });
       qc.invalidateQueries({ queryKey: ["cases"] });
-      toast.success("System scan queued");
+      qc.invalidateQueries({ queryKey: ["artifacts"] });
+      qc.invalidateQueries({ queryKey: ["findings"] });
+      qc.invalidateQueries({ queryKey: ["employees"] });
+      qc.invalidateQueries({ queryKey: ["scan-history"] });
+      toast.success("System scan completed");
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -190,6 +217,8 @@ export function useRemediateArtifacts() {
       qc.invalidateQueries({ queryKey: ["artifacts"] });
       qc.invalidateQueries({ queryKey: ["cases"] });
       qc.invalidateQueries({ queryKey: ["dashboard"] });
+      qc.invalidateQueries({ queryKey: ["findings"] });
+      qc.invalidateQueries({ queryKey: ["employees"] });
       toast.success("Artifacts remediated");
     },
     onError: (e: Error) => toast.error(e.message),
@@ -262,6 +291,9 @@ export function useRevokeEmployeeAccess(employeeId: string) {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["employees"] });
       qc.invalidateQueries({ queryKey: ["dashboard"] });
+      qc.invalidateQueries({ queryKey: ["cases"] });
+      qc.invalidateQueries({ queryKey: ["artifacts"] });
+      qc.invalidateQueries({ queryKey: ["findings"] });
       toast.success("Employee access revoked");
     },
     onError: (e: Error) => toast.error(e.message),
@@ -294,6 +326,9 @@ export function useGlobalAppRemoval() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["apps"] });
       qc.invalidateQueries({ queryKey: ["dashboard"] });
+      qc.invalidateQueries({ queryKey: ["artifacts"] });
+      qc.invalidateQueries({ queryKey: ["cases"] });
+      qc.invalidateQueries({ queryKey: ["employees"] });
       toast.success("App globally revoked");
     },
     onError: (e: Error) => toast.error(e.message),
