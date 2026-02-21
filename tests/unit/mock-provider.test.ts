@@ -37,10 +37,8 @@ describe("MockProvider", () => {
       expect(stats.kpis).toBeDefined();
       expect(typeof stats.kpis.pending_scan).toBe("number");
       expect(typeof stats.kpis.critical_gaps).toBe("number");
-      expect(typeof stats.kpis.oauth_grants_7d).toBe("number");
-      expect(typeof stats.kpis.oauth_grants_30d).toBe("number");
-      expect(typeof stats.kpis.post_offboard_logins_7d).toBe("number");
-      expect(typeof stats.kpis.post_offboard_logins_30d).toBe("number");
+      expect(typeof stats.kpis.oauth_grants).toBe("number");
+      expect(typeof stats.kpis.post_offboard_logins).toBe("number");
       expect(typeof stats.kpis.total_cases).toBe("number");
       expect(typeof stats.kpis.total_findings).toBe("number");
       expect(typeof stats.kpis.total_findings).toBe("number");
@@ -150,7 +148,7 @@ describe("MockProvider", () => {
 
   describe("executeRemediation", () => {
     it("full_bundle remediates all case artifacts and findings", async () => {
-      const caseName = "OBC-2025-00001";
+      const caseName = "OBC-MOCK-00001";
       const result = await provider.executeRemediation(caseName, "full_bundle");
       expect(result.status).toBe("success");
       expect(result.action).toBe("full_bundle");
@@ -162,28 +160,28 @@ describe("MockProvider", () => {
     });
 
     it("revoke_token revokes OAuth tokens", async () => {
-      const caseName = "OBC-2025-00001";
+      const caseName = "OBC-MOCK-00001";
       const result = await provider.executeRemediation(caseName, "revoke_token");
       expect(result.status).toBe("success");
       expect(result.action).toBe("revoke_token");
     });
 
     it("delete_asp deletes ASPs", async () => {
-      const caseName = "OBC-2025-00002";
+      const caseName = "OBC-MOCK-00003";
       const result = await provider.executeRemediation(caseName, "delete_asp");
       expect(result.status).toBe("success");
       expect(result.action).toBe("delete_asp");
     });
 
     it("sign_out acknowledges login events", async () => {
-      const caseName = "OBC-2025-00003";
+      const caseName = "OBC-MOCK-00001";
       const result = await provider.executeRemediation(caseName, "sign_out");
       expect(result.status).toBe("success");
       expect(result.action).toBe("sign_out");
     });
 
     it("throws for unknown action", async () => {
-      await expect(provider.executeRemediation("OBC-2025-00001", "invalid_action")).rejects.toThrow(
+      await expect(provider.executeRemediation("OBC-MOCK-00001", "invalid_action")).rejects.toThrow(
         "Unknown action"
       );
     });
@@ -191,7 +189,7 @@ describe("MockProvider", () => {
 
   describe("bulkRemediate", () => {
     it("remediates multiple artifacts", async () => {
-      const caseName = "OBC-2025-00001";
+      const caseName = "OBC-MOCK-00001";
       const artifacts = (await provider.listArtifacts({ case: caseName, status: "Active" })).slice(0, 2);
       const names = artifacts.map((a) => a.name);
 
@@ -209,8 +207,8 @@ describe("MockProvider", () => {
     });
 
     it("filters by case when provided", async () => {
-      const result = await provider.listArtifacts({ case: "OBC-2025-00001" });
-      expect(result.every((a) => a.case === "OBC-2025-00001")).toBe(true);
+      const result = await provider.listArtifacts({ case: "OBC-MOCK-00001" });
+      expect(result.every((a) => a.case === "OBC-MOCK-00001")).toBe(true);
     });
 
     it("filters by status when provided", async () => {
@@ -231,8 +229,8 @@ describe("MockProvider", () => {
     });
 
     it("filters by case when provided", async () => {
-      const result = await provider.listFindings({ case: "OBC-2025-00001" });
-      expect(result.every((f) => f.case === "OBC-2025-00001")).toBe(true);
+      const result = await provider.listFindings({ case: "OBC-MOCK-00001" });
+      expect(result.every((f) => f.case === "OBC-MOCK-00001")).toBe(true);
     });
 
     it("filters by severity when provided", async () => {

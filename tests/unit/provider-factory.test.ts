@@ -1,6 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { getProvider, resetProvider } from "@/lib/providers";
-import { MockProvider } from "@/lib/providers/frappe/mock-provider";
 
 describe("Provider factory", () => {
   const originalEnv = process.env;
@@ -15,21 +14,13 @@ describe("Provider factory", () => {
   });
 
   describe("getProvider", () => {
-    it("returns MockProvider when NEXT_PUBLIC_USE_MOCK=true", () => {
-      process.env.NEXT_PUBLIC_USE_MOCK = "true";
-      process.env.NODE_ENV = "production";
-      process.env.FRAPPE_API_KEY = "some-key";
-
+    it("always returns FallbackProvider", () => {
       const provider = getProvider();
-      expect(provider).toBeInstanceOf(MockProvider);
-      expect(provider.name).toBe("mock");
+      expect(provider.name).toBe("fallback");
     });
 
-    it("returns FallbackProvider when NEXT_PUBLIC_USE_MOCK is not true", () => {
-      process.env.NEXT_PUBLIC_USE_MOCK = "false";
-      process.env.NODE_ENV = "development";
+    it("returns FallbackProvider even without FRAPPE_API_KEY", () => {
       delete process.env.FRAPPE_API_KEY;
-
       const provider = getProvider();
       expect(provider.name).toBe("fallback");
     });
@@ -37,12 +28,11 @@ describe("Provider factory", () => {
 
   describe("resetProvider", () => {
     it("clears the singleton", () => {
-      process.env.NEXT_PUBLIC_USE_MOCK = "true";
       const first = getProvider();
       resetProvider();
       const second = getProvider();
       expect(first).not.toBe(second);
-      expect(second).toBeInstanceOf(MockProvider);
+      expect(second.name).toBe("fallback");
     });
   });
 });

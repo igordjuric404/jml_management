@@ -66,12 +66,7 @@ let providerInstance: HrProvider | null = null;
 
 export function getProvider(): HrProvider {
   if (providerInstance) return providerInstance;
-
-  if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
-    providerInstance = new MockProvider();
-  } else {
-    providerInstance = new FallbackProvider();
-  }
+  providerInstance = new FallbackProvider();
   return providerInstance;
 }
 

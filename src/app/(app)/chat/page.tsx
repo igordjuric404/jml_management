@@ -93,7 +93,12 @@ export default function ChatPage() {
                       : "bg-muted"
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-wrap">{m.content}</p>
+                  <p className="text-sm whitespace-pre-wrap" dangerouslySetInnerHTML={{
+                    __html: m.content
+                      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                      .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-primary underline underline-offset-2 font-medium hover:opacity-80">$1</a>')
+                      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'),
+                  }} />
                   {m.sources && m.sources.length > 0 && (
                     <div className="mt-2 pt-2 border-t border-border/50">
                       <p className="text-xs font-medium mb-1">Sources:</p>

@@ -8,7 +8,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
-  Shield, AlertTriangle, FolderOpen, Users, Grid3X3,
+  AlertTriangle, FolderOpen, Users, Grid3X3,
   History, FileText, Search, RefreshCw, Loader2, Lock,
 } from "lucide-react";
 import Link from "next/link";
@@ -73,13 +73,12 @@ export default function DashboardPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <KpiCard label="Pending Scan" value={kpis?.pending_scan} color="blue" href="/cases?status=Draft" />
-        <KpiCard label="Critical Gaps" value={kpis?.critical_gaps} color="red" href="/findings?severity=Critical" />
-        <KpiCard label="OAuth Grants (7d)" value={kpis?.oauth_grants_7d} color="orange" href="/artifacts?type=OAuthToken" />
-        <KpiCard label="OAuth Grants (30d)" value={kpis?.oauth_grants_30d} color="yellow" href="/artifacts?type=OAuthToken" />
-        <KpiCard label="Post-offboard Logins" value={kpis?.post_offboard_logins_7d} color="red" href="/findings?type=PostOffboardLogin" />
-        <KpiCard label="Total Cases" value={kpis?.total_cases} color="gray" href="/cases" />
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <KpiCard label="Pending Scan" value={kpis?.pending_scan} href="/cases?status=Draft" />
+        <KpiCard label="Critical Gaps" value={kpis?.critical_gaps} href="/findings?severity=Critical" />
+        <KpiCard label="OAuth Grants" value={kpis?.oauth_grants} href="/artifacts?type=OAuthToken" />
+        <KpiCard label="Post-offboard Logins" value={kpis?.post_offboard_logins} href="/findings?type=PostOffboardLogin" />
+        <KpiCard label="Total Cases" value={kpis?.total_cases} href="/cases" />
       </div>
 
       {/* Quick Links */}
@@ -100,53 +99,6 @@ export default function DashboardPage() {
           </div>
         </CardContent>
       </Card>
-
-      {/* Top OAuth Apps */}
-      {stats?.top_oauth_apps && stats.top_oauth_apps.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Top Lingering OAuth Apps</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>App</TableHead>
-                  <TableHead>Client ID</TableHead>
-                  <TableHead className="text-right">Active Grants</TableHead>
-                  <TableHead></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {stats.top_oauth_apps.map((app) => (
-                  <TableRow key={app.client_id}>
-                    <TableCell className="font-medium">
-                      <Link
-                        href={`/apps?client_id=${encodeURIComponent(app.client_id)}`}
-                        className="hover:underline text-primary"
-                      >
-                        {app.app_display_name || "Unknown"}
-                      </Link>
-                    </TableCell>
-                    <TableCell>
-                      <code className="text-xs">{app.client_id?.substring(0, 30)}</code>
-                    </TableCell>
-                    <TableCell className="text-right font-bold">{app.grant_count}</TableCell>
-                    <TableCell>
-                      <Link
-                        href={`/apps?client_id=${encodeURIComponent(app.client_id)}`}
-                        className="text-sm text-primary hover:underline"
-                      >
-                        Details →
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-      )}
 
       {/* Risky Cases */}
       {stats?.risky_cases && stats.risky_cases.length > 0 && (
@@ -211,30 +163,68 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Top OAuth Apps */}
+      {stats?.top_oauth_apps && stats.top_oauth_apps.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Top Lingering OAuth Apps</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>App</TableHead>
+                  <TableHead>Client ID</TableHead>
+                  <TableHead className="text-right">Active Grants</TableHead>
+                  <TableHead></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {stats.top_oauth_apps.map((app) => (
+                  <TableRow key={app.client_id}>
+                    <TableCell className="font-medium">
+                      <Link
+                        href={`/apps?client_id=${encodeURIComponent(app.client_id)}`}
+                        className="hover:underline text-primary"
+                      >
+                        {app.app_display_name || "Unknown"}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <code className="text-xs">{app.client_id?.substring(0, 30)}</code>
+                    </TableCell>
+                    <TableCell className="text-right font-bold">{app.grant_count}</TableCell>
+                    <TableCell>
+                      <Link
+                        href={`/apps?client_id=${encodeURIComponent(app.client_id)}`}
+                        className="text-sm text-primary hover:underline"
+                      >
+                        Details →
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
 
 function KpiCard({
-  label, value, color, href,
+  label, value, href,
 }: {
-  label: string; value?: number; color: string; href: string;
+  label: string; value?: number; href: string;
 }) {
-  const colorMap: Record<string, string> = {
-    blue: "text-blue-500",
-    red: "text-red-500",
-    orange: "text-orange-500",
-    yellow: "text-yellow-500",
-    gray: "text-muted-foreground",
-    green: "text-green-500",
-  };
-
   return (
     <Link href={href}>
       <Card className="cursor-pointer hover:bg-accent/50 transition-colors">
         <CardContent className="p-4 text-center">
           <p className="text-xs text-muted-foreground mb-1">{label}</p>
-          <p className={`text-2xl font-bold ${colorMap[color] || ""}`}>
+          <p className="text-2xl font-bold">
             {value ?? 0}
           </p>
         </CardContent>

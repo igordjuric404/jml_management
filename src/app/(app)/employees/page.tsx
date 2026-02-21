@@ -167,12 +167,16 @@ function EmployeesPageContent() {
                     variant={
                       detail.employee.status === "Active"
                         ? "default"
-                        : "destructive"
+                        : detail.employee.status === "To Leave"
+                          ? "outline"
+                          : "destructive"
                     }
                     className={
                       detail.employee.status === "Active"
                         ? "bg-green-600 text-white"
-                        : undefined
+                        : detail.employee.status === "To Leave"
+                          ? "border-amber-500 text-amber-600"
+                          : undefined
                     }
                   >
                     {detail.employee.status}
@@ -513,11 +517,13 @@ function EmployeesPageContent() {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      variant={emp.emp_status === "Active" ? "default" : "destructive"}
+                      variant={emp.emp_status === "Active" ? "default" : emp.emp_status === "To Leave" ? "outline" : "destructive"}
                       className={
                         emp.emp_status === "Active"
                           ? "bg-green-600 text-white"
-                          : undefined
+                          : emp.emp_status === "To Leave"
+                            ? "border-amber-500 text-amber-600"
+                            : undefined
                       }
                     >
                       {emp.emp_status}

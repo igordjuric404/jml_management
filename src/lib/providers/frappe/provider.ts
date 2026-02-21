@@ -53,7 +53,18 @@ export class FrappeProvider implements HrProvider {
   }
 
   async getDashboardStats(): Promise<DashboardStats> {
-    return frappeCall<DashboardStats>("oauth_gap_monitor.api.get_dashboard_stats");
+    const [raw, oauthCount] = await Promise.all([
+      frappeCall<DashboardStats>("oauth_gap_monitor.api.get_dashboard_stats"),
+      frappeGetList<{ name: string }>("Access Artifact", {
+        filters: { artifact_type: "OAuthToken", status: "Active" },
+        fields: ["name"],
+        limit_page_length: 0,
+      }),
+    ]);
+    const k = raw.kpis as Record<string, number>;
+    k.oauth_grants = oauthCount.length;
+    k.post_offboard_logins = k.post_offboard_logins ?? k.post_offboard_logins_30d ?? k.post_offboard_logins_7d ?? 0;
+    return raw;
   }
 
   async getStatistics(): Promise<Statistics> {
@@ -74,9 +85,42 @@ export class FrappeProvider implements HrProvider {
   }
 
   async getCaseDetail(caseName: string): Promise<CaseDetail> {
-    return frappeCall<CaseDetail>("oauth_gap_monitor.api.get_case_detail", {
+    const detail = await frappeCall<CaseDetail>("oauth_gap_monitor.api.get_case_detail", {
       body: { case_name: caseName },
     });
+
+    const linked = [
+      ...(detail.artifacts?.tokens ?? []),
+      ...(detail.artifacts?.asps ?? []),
+      ...(detail.artifacts?.login_events ?? []),
+      ...(detail.artifacts?.other ?? []),
+    ];
+
+    if (linked.length === 0 && detail.case.primary_email) {
+      const byEmail = await frappeGetList<AccessArtifact>("Access Artifact", {
+        filters: { subject_email: detail.case.primary_email },
+        fields: [
+          "name", "case", "artifact_type", "subject_email", "status",
+          "app_display_name", "client_id", "risk_level", "scopes_json",
+          "metadata_json", "creation", "modified",
+        ],
+        limit_page_length: 0,
+      });
+
+      const tokens: AccessArtifact[] = [];
+      const asps: AccessArtifact[] = [];
+      const loginEvents: AccessArtifact[] = [];
+      const other: AccessArtifact[] = [];
+      for (const a of byEmail) {
+        if (a.artifact_type === "OAuthToken") tokens.push(a);
+        else if (a.artifact_type === "ASP") asps.push(a);
+        else if (a.artifact_type === "LoginEvent") loginEvents.push(a);
+        else other.push(a);
+      }
+      detail.artifacts = { tokens, asps, login_events: loginEvents, other, total: byEmail.length };
+    }
+
+    return detail;
   }
 
   async createCase(data: Partial<OffboardingCase>): Promise<OffboardingCase> {
@@ -182,7 +226,7 @@ export class FrappeProvider implements HrProvider {
   }
 
   async getEmployeeList(): Promise<Employee[]> {
-    const [ogmEmployees, allFrappeEmployees, activeArtifacts] = await Promise.all([
+    const [ogmEmployees, allFrappeEmployees, activeArtifacts, openFindings, allCases] = await Promise.all([
       frappeCall<Employee[]>("oauth_gap_monitor.api.get_employee_list"),
       frappeGetList<Record<string, string>>("Employee", {
         fields: ["name", "employee_name", "company_email", "status", "department", "designation", "date_of_joining", "relieving_date", "company"],
@@ -194,6 +238,15 @@ export class FrappeProvider implements HrProvider {
         fields: ["subject_email"],
         limit_page_length: 0,
       }),
+      frappeGetList<{ case: string }>("Finding", {
+        filters: { closed_at: ["is", "not set"] },
+        fields: ["case"],
+        limit_page_length: 0,
+      }),
+      frappeGetList<{ name: string; primary_email: string; status: string }>("Offboarding Case", {
+        fields: ["name", "primary_email", "status"],
+        limit_page_length: 0,
+      }),
     ]);
 
     const artifactCountByEmail = new Map<string, number>();
@@ -201,15 +254,44 @@ export class FrappeProvider implements HrProvider {
       artifactCountByEmail.set(a.subject_email, (artifactCountByEmail.get(a.subject_email) || 0) + 1);
     }
 
+    const caseEmailMap = new Map<string, string>();
+    const remediatedEmails = new Set<string>();
+    for (const c of allCases) {
+      caseEmailMap.set(c.name, c.primary_email);
+      if (c.status === "Remediated" || c.status === "Closed") {
+        remediatedEmails.add(c.primary_email);
+      }
+    }
+
+    const openFindingsByEmail = new Map<string, number>();
+    for (const f of openFindings) {
+      const email = caseEmailMap.get(f.case);
+      if (email) {
+        openFindingsByEmail.set(email, (openFindingsByEmail.get(email) || 0) + 1);
+      }
+    }
+
+    const today = new Date().toISOString().slice(0, 10);
+    const deriveStatus = (frappeStatus: string, relievingDate: string | undefined, email: string): Employee["emp_status"] => {
+      if (frappeStatus === "Left" && relievingDate && relievingDate > today && !remediatedEmails.has(email)) {
+        return "To Leave";
+      }
+      if (frappeStatus === "Left") return "Left";
+      if (frappeStatus === "Suspended") return "Suspended";
+      return "Active";
+    };
+
     const ogmMap = new Map(ogmEmployees.map(e => [e.employee_id, e]));
     const merged: Employee[] = [];
     for (const fe of allFrappeEmployees) {
+      const liveArtifacts = artifactCountByEmail.get(fe.company_email) || 0;
+      const liveOpenFindings = openFindingsByEmail.get(fe.company_email) || 0;
       const existing = ogmMap.get(fe.name);
       if (existing) {
-        const emailCount = artifactCountByEmail.get(fe.company_email) || 0;
-        if (emailCount > (existing.active_artifacts ?? 0)) {
-          existing.active_artifacts = emailCount;
-        }
+        existing.emp_status = deriveStatus(fe.status, fe.relieving_date, fe.company_email);
+        existing.relieving_date = fe.relieving_date || undefined;
+        existing.active_artifacts = liveArtifacts;
+        existing.open_findings = liveOpenFindings;
         merged.push(existing);
         ogmMap.delete(fe.name);
       } else {
@@ -217,26 +299,74 @@ export class FrappeProvider implements HrProvider {
           employee_id: fe.name,
           employee_name: fe.employee_name || "",
           company_email: fe.company_email || "",
-          emp_status: (fe.status === "Left" ? "Left" : fe.status === "Suspended" ? "Suspended" : "Active") as Employee["emp_status"],
+          emp_status: deriveStatus(fe.status, fe.relieving_date, fe.company_email),
           date_of_joining: fe.date_of_joining || undefined,
           relieving_date: fe.relieving_date || undefined,
           department: fe.department || undefined,
           designation: fe.designation || undefined,
           company: fe.company || undefined,
           case_count: 0,
-          active_artifacts: artifactCountByEmail.get(fe.company_email) || 0,
-          open_findings: 0,
+          active_artifacts: liveArtifacts,
+          open_findings: liveOpenFindings,
         });
       }
     }
     for (const remaining of ogmMap.values()) merged.push(remaining);
-    return merged;
+    return merged.filter(e =>
+      e.emp_status === "Active" ||
+      e.emp_status === "To Leave" ||
+      (e.case_count ?? 0) > 0 ||
+      (e.active_artifacts ?? 0) > 0 ||
+      (e.open_findings ?? 0) > 0
+    );
   }
 
   async getEmployeeDetail(employeeId: string): Promise<EmployeeDetail> {
-    return frappeCall<EmployeeDetail>("oauth_gap_monitor.api.get_employee_detail", {
-      body: { employee_id: employeeId },
-    });
+    const [detail, frappeEmp, empCases] = await Promise.all([
+      frappeCall<EmployeeDetail>("oauth_gap_monitor.api.get_employee_detail", {
+        body: { employee_id: employeeId },
+      }),
+      frappeGetList<Record<string, string>>("Employee", {
+        filters: { name: employeeId },
+        fields: ["status", "relieving_date", "company_email"],
+        limit_page_length: 1,
+      }),
+      frappeGetList<{ status: string }>("Offboarding Case", {
+        filters: { employee: employeeId },
+        fields: ["status"],
+        limit_page_length: 0,
+      }),
+    ]);
+
+    if (frappeEmp.length > 0) {
+      const today = new Date().toISOString().slice(0, 10);
+      const fe = frappeEmp[0];
+      const isRemediated = empCases.some(c => c.status === "Remediated" || c.status === "Closed");
+      if (fe.status === "Left" && fe.relieving_date && fe.relieving_date > today && !isRemediated) {
+        detail.employee.status = "To Leave";
+      } else if (fe.status === "Left") {
+        detail.employee.status = "Left";
+      }
+
+      const allArtifactsForEmail = await frappeGetList<AccessArtifact>("Access Artifact", {
+        filters: { subject_email: fe.company_email },
+        fields: [
+          "name", "case", "artifact_type", "subject_email", "status",
+          "app_display_name", "client_id", "risk_level", "scopes_json",
+          "metadata_json", "creation", "modified",
+        ],
+        order_by: "modified desc",
+        limit_page_length: 0,
+      });
+      detail.summary.active_artifacts = allArtifactsForEmail.filter(a => a.status === "Active").length;
+      detail.artifacts = allArtifactsForEmail;
+    } else {
+      detail.summary.active_artifacts = detail.artifacts.filter(a => a.status === "Active").length;
+    }
+
+    detail.summary.open_findings = detail.findings.filter(f => !f.closed_at).length;
+
+    return detail;
   }
 
   async revokeEmployeeAccess(employeeId: string, scope: string): Promise<RemediationResult> {

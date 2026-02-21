@@ -1,6 +1,6 @@
 /**
- * Mock data matching the Frappe repopulate.py scenarios A–J.
- * Used when Frappe is unavailable (dev mode / Cloudflare Pages static build).
+ * Mock data mirroring the Frappe repopulate_test_data.sh output.
+ * Used as fallback when Frappe is unreachable (e.g. Cloudflare production).
  */
 
 import type {
@@ -14,135 +14,105 @@ import type {
 
 const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
 const monthAgo = new Date(Date.now() - 30 * 86400000).toISOString();
-const oneHourAgo = new Date(Date.now() - 3600000).toISOString();
 
 // ── Employees ──────────────────────────────────────────────
 export const mockEmployees: Employee[] = [
-  { employee_id: "HR-EMP-00001", employee_name: "Alice Johnson", company_email: "alice.johnson@testcorp.com", emp_status: "Left", date_of_joining: "2020-03-15", relieving_date: "2025-12-01", department: "Engineering", designation: "Senior Developer", company: "Test Corp", case_count: 1, active_artifacts: 3, open_findings: 3 },
-  { employee_id: "HR-EMP-00002", employee_name: "Bob Smith", company_email: "bob.smith@testcorp.com", emp_status: "Left", date_of_joining: "2019-06-01", relieving_date: "2025-11-15", department: "Marketing", designation: "Marketing Manager", company: "Test Corp", case_count: 1, active_artifacts: 2, open_findings: 2 },
-  { employee_id: "HR-EMP-00003", employee_name: "Charlie Brown", company_email: "charlie.brown@testcorp.com", emp_status: "Left", date_of_joining: "2021-01-10", relieving_date: "2025-10-20", department: "Sales", designation: "Sales Rep", company: "Test Corp", case_count: 1, active_artifacts: 1, open_findings: 1 },
-  { employee_id: "HR-EMP-00004", employee_name: "Diana Prince", company_email: "diana.prince@testcorp.com", emp_status: "Left", date_of_joining: "2018-09-01", relieving_date: "2025-09-30", department: "IT", designation: "IT Admin", company: "Test Corp", case_count: 1, active_artifacts: 2, open_findings: 2 },
-  { employee_id: "HR-EMP-00005", employee_name: "Eve Wilson", company_email: "eve.wilson@testcorp.com", emp_status: "Left", date_of_joining: "2020-07-15", relieving_date: "2025-08-15", department: "HR", designation: "HR Specialist", company: "Test Corp", case_count: 1, active_artifacts: 0, open_findings: 0 },
-  { employee_id: "HR-EMP-00006", employee_name: "Frank Castle", company_email: "frank.castle@testcorp.com", emp_status: "Left", date_of_joining: "2017-04-20", relieving_date: "2025-07-01", department: "Engineering", designation: "DevOps Engineer", company: "Test Corp", case_count: 1, active_artifacts: 0, open_findings: 0 },
-  { employee_id: "HR-EMP-00007", employee_name: "Grace Lee", company_email: "grace.lee@testcorp.com", emp_status: "Left", date_of_joining: "2021-11-01", relieving_date: "2025-12-15", department: "Finance", designation: "Accountant", company: "Test Corp", case_count: 1, active_artifacts: 4, open_findings: 4 },
-  { employee_id: "HR-EMP-00008", employee_name: "Henry Ford", company_email: "henry.ford@testcorp.com", emp_status: "Left", date_of_joining: "2019-02-14", relieving_date: "2025-06-30", department: "Legal", designation: "Legal Counsel", company: "Test Corp", case_count: 1, active_artifacts: 1, open_findings: 1 },
-  { employee_id: "HR-EMP-00009", employee_name: "Ivy Chen", company_email: "ivy.chen@testcorp.com", emp_status: "Left", date_of_joining: "2022-05-01", relieving_date: "2025-11-30", department: "Engineering", designation: "Backend Developer", company: "Test Corp", case_count: 1, active_artifacts: 6, open_findings: 6 },
-  { employee_id: "HR-EMP-00010", employee_name: "Jack Daniels", company_email: "jack.daniels@testcorp.com", emp_status: "Left", date_of_joining: "2020-08-01", relieving_date: "2025-10-15", department: "Support", designation: "Support Lead", company: "Test Corp", case_count: 1, active_artifacts: 1, open_findings: 1 },
-  { employee_id: "HR-EMP-00011", employee_name: "Karen White", company_email: "karen.white@testcorp.com", emp_status: "Active", date_of_joining: "2021-03-10", department: "Engineering", designation: "Frontend Developer", company: "Test Corp", case_count: 0, active_artifacts: 0, open_findings: 0 },
-  { employee_id: "HR-EMP-00012", employee_name: "Liam Neeson", company_email: "liam.neeson@testcorp.com", emp_status: "Active", date_of_joining: "2019-11-20", department: "Marketing", designation: "Content Writer", company: "Test Corp", case_count: 0, active_artifacts: 0, open_findings: 0 },
-  { employee_id: "HR-EMP-00013", employee_name: "Monica Geller", company_email: "monica.geller@testcorp.com", emp_status: "Active", date_of_joining: "2020-01-05", department: "Operations", designation: "Operations Manager", company: "Test Corp", case_count: 0, active_artifacts: 0, open_findings: 0 },
-  { employee_id: "HR-EMP-00014", employee_name: "Nathan Drake", company_email: "nathan.drake@testcorp.com", emp_status: "Active", date_of_joining: "2022-06-15", department: "Engineering", designation: "QA Engineer", company: "Test Corp", case_count: 0, active_artifacts: 0, open_findings: 0 },
-  { employee_id: "HR-EMP-00015", employee_name: "Olivia Pope", company_email: "olivia.pope@testcorp.com", emp_status: "Active", date_of_joining: "2018-12-01", department: "Executive", designation: "VP Operations", company: "Test Corp", case_count: 0, active_artifacts: 0, open_findings: 0 },
-  { employee_id: "HR-EMP-00016", employee_name: "Peter Parker", company_email: "peter.parker@testcorp.com", emp_status: "Active", date_of_joining: "2023-01-20", department: "Engineering", designation: "Intern", company: "Test Corp", case_count: 0, active_artifacts: 0, open_findings: 0 },
-  { employee_id: "HR-EMP-00017", employee_name: "Quinn Hughes", company_email: "quinn.hughes@testcorp.com", emp_status: "Active", date_of_joining: "2021-08-30", department: "Design", designation: "UI Designer", company: "Test Corp", case_count: 0, active_artifacts: 0, open_findings: 0 },
-  { employee_id: "HR-EMP-00018", employee_name: "Rachel Green", company_email: "rachel.green@testcorp.com", emp_status: "Active", date_of_joining: "2020-04-15", department: "Sales", designation: "Account Executive", company: "Test Corp", case_count: 0, active_artifacts: 0, open_findings: 0 },
+  // Active employees (from repopulate_test_data.sh)
+  { employee_id: "HR-EMP-TEST-00025", employee_name: "Alex Rivera", company_email: "alex.rivera@testcorp.com", emp_status: "Active", date_of_joining: "2023-06-01", department: "Engineering", designation: "Senior Backend Developer", company: "HUB201", case_count: 0, active_artifacts: 4, open_findings: 0 },
+  { employee_id: "HR-EMP-TEST-00026", employee_name: "Maya Patel", company_email: "maya.patel@testcorp.com", emp_status: "To Leave", date_of_joining: "2023-06-01", relieving_date: "2026-03-15", department: "Product", designation: "Product Manager", company: "HUB201", case_count: 1, active_artifacts: 3, open_findings: 0 },
+  { employee_id: "HR-EMP-TEST-00027", employee_name: "James O'Brien", company_email: "james.obrien@testcorp.com", emp_status: "Active", date_of_joining: "2023-06-01", department: "Security", designation: "Security Analyst", company: "HUB201", case_count: 0, active_artifacts: 3, open_findings: 0 },
+  { employee_id: "HR-EMP-TEST-00028", employee_name: "Yuki Tanaka", company_email: "yuki.tanaka@testcorp.com", emp_status: "Active", date_of_joining: "2023-06-01", department: "Data", designation: "Data Engineer", company: "HUB201", case_count: 0, active_artifacts: 2, open_findings: 0 },
+  { employee_id: "HR-EMP-TEST-00029", employee_name: "Sofia Martinez", company_email: "sofia.martinez@testcorp.com", emp_status: "Active", date_of_joining: "2023-06-01", department: "DevOps", designation: "DevOps Lead", company: "HUB201", case_count: 0, active_artifacts: 3, open_findings: 0 },
+  // Active employees (from Frappe base setup)
+  { employee_id: "HR-EMP-00011", employee_name: "Henry Check", company_email: "henry.check@example.com", emp_status: "Active", date_of_joining: "2022-01-15", department: "Engineering", company: "HUB201", case_count: 1, active_artifacts: 0, open_findings: 0 },
+  { employee_id: "HR-EMP-00013", employee_name: "John Active", company_email: "john.active@example.com", emp_status: "Active", date_of_joining: "2021-03-10", department: "Engineering", company: "HUB201", case_count: 0, active_artifacts: 2, open_findings: 0 },
+  { employee_id: "HR-EMP-00014", employee_name: "Sarah Active", company_email: "sarah.active@example.com", emp_status: "Active", date_of_joining: "2021-06-20", department: "Marketing", company: "HUB201", case_count: 0, active_artifacts: 3, open_findings: 0 },
+  { employee_id: "HR-EMP-00015", employee_name: "Mike Active", company_email: "mike.active@example.com", emp_status: "Active", date_of_joining: "2022-02-01", department: "Sales", company: "HUB201", case_count: 0, active_artifacts: 2, open_findings: 0 },
+  { employee_id: "HR-EMP-00016", employee_name: "Lisa Active", company_email: "lisa.active@example.com", emp_status: "Active", date_of_joining: "2021-09-15", department: "Finance", company: "HUB201", case_count: 0, active_artifacts: 2, open_findings: 0 },
+  { employee_id: "HR-EMP-00018", employee_name: "Emma Active", company_email: "emma.active@example.com", emp_status: "Active", date_of_joining: "2022-04-01", department: "HR", company: "HUB201", case_count: 0, active_artifacts: 4, open_findings: 0 },
+  // Left employees with cases/artifacts/findings (from repopulate_test_data.sh)
+  { employee_id: "HR-EMP-TEST-00030", employee_name: "Carlos Mendez", company_email: "carlos.mendez@testcorp.com", emp_status: "Left", date_of_joining: "2021-03-01", relieving_date: "2026-02-13", department: "Engineering", designation: "Staff Engineer", company: "HUB201", case_count: 1, active_artifacts: 5, open_findings: 4 },
+  { employee_id: "HR-EMP-TEST-00031", employee_name: "Nina Kowalski", company_email: "nina.kowalski@testcorp.com", emp_status: "Left", date_of_joining: "2021-03-01", relieving_date: "2026-02-13", department: "Finance", designation: "Finance Manager", company: "HUB201", case_count: 1, active_artifacts: 3, open_findings: 2 },
+  { employee_id: "HR-EMP-TEST-00032", employee_name: "Raj Sharma", company_email: "raj.sharma@testcorp.com", emp_status: "Left", date_of_joining: "2021-03-01", relieving_date: "2026-02-13", department: "IT", designation: "IT Admin", company: "HUB201", case_count: 1, active_artifacts: 3, open_findings: 2 },
 ];
 
-// ── Cases (Scenarios A-J) ──────────────────────────────────
+// ── Cases ──────────────────────────────────────────────────
 export const mockCases: OffboardingCase[] = [
-  { name: "OBC-2025-00001", employee: "HR-EMP-00001", employee_name: "Alice Johnson", primary_email: "alice.johnson@testcorp.com", event_type: "Offboard", effective_date: "2025-12-01T00:00:00", status: "Gaps Found", notes: "Scenario A: Multiple OAuth tokens lingering", notify_user_1w: false, notify_user_1d: false, creation: monthAgo },
-  { name: "OBC-2025-00002", employee: "HR-EMP-00002", employee_name: "Bob Smith", primary_email: "bob.smith@testcorp.com", event_type: "Offboard", effective_date: "2025-11-15T00:00:00", status: "Gaps Found", notes: "Scenario B: ASPs still active", notify_user_1w: false, notify_user_1d: false, creation: monthAgo },
-  { name: "OBC-2025-00003", employee: "HR-EMP-00003", employee_name: "Charlie Brown", primary_email: "charlie.brown@testcorp.com", event_type: "Offboard", effective_date: "2025-10-20T00:00:00", status: "Gaps Found", notes: "Scenario C: Post-offboard login detected", notify_user_1w: false, notify_user_1d: false, creation: monthAgo },
-  { name: "OBC-2025-00004", employee: "HR-EMP-00004", employee_name: "Diana Prince", primary_email: "diana.prince@testcorp.com", event_type: "Security Review", effective_date: "2025-09-30T00:00:00", status: "Gaps Found", notes: "Scenario D: Admin MFA weak + DWD risk", notify_user_1w: false, notify_user_1d: false, creation: monthAgo },
-  { name: "OBC-2025-00005", employee: "HR-EMP-00005", employee_name: "Eve Wilson", primary_email: "eve.wilson@testcorp.com", event_type: "Offboard", effective_date: "2025-08-15T00:00:00", status: "Scheduled", scheduled_remediation_date: oneHourAgo, notes: "Scenario E: Scheduled remediation", notify_user_1w: true, notify_user_1d: false, creation: monthAgo },
-  { name: "OBC-2025-00006", employee: "HR-EMP-00006", employee_name: "Frank Castle", primary_email: "frank.castle@testcorp.com", event_type: "Offboard", effective_date: "2025-07-01T00:00:00", status: "Remediated", notes: "Scenario F: Already remediated", notify_user_1w: false, notify_user_1d: false, creation: monthAgo },
-  { name: "OBC-2025-00007", employee: "HR-EMP-00007", employee_name: "Grace Lee", primary_email: "grace.lee@testcorp.com", event_type: "Offboard", effective_date: "2025-12-15T00:00:00", status: "Gaps Found", notes: "Scenario G: All clear after scan", notify_user_1w: false, notify_user_1d: false, creation: weekAgo },
-  { name: "OBC-2025-00008", employee: "HR-EMP-00008", employee_name: "Henry Ford", primary_email: "henry.ford@testcorp.com", event_type: "Manual Check", effective_date: "2025-06-30T00:00:00", status: "Gaps Found", notes: "Scenario H: Mixed artifacts", notify_user_1w: false, notify_user_1d: false, creation: weekAgo },
-  { name: "OBC-2025-00009", employee: "HR-EMP-00009", employee_name: "Ivy Chen", primary_email: "ivy.chen@testcorp.com", event_type: "Offboard", effective_date: "2025-11-30T00:00:00", status: "Gaps Found", notes: "Scenario I: Manual check needed", notify_user_1w: false, notify_user_1d: false, creation: weekAgo },
-  { name: "OBC-2025-00010", employee: "HR-EMP-00010", employee_name: "Jack Daniels", primary_email: "jack.daniels@testcorp.com", event_type: "Offboard", effective_date: "2025-10-15T00:00:00", status: "Gaps Found", notes: "Scenario J: Heavy OAuth user", notify_user_1w: false, notify_user_1d: false, creation: weekAgo },
+  { name: "OBC-MOCK-00000", employee: "HR-EMP-TEST-00026", employee_name: "Maya Patel", primary_email: "maya.patel@testcorp.com", event_type: "Offboard", effective_date: "2026-03-15T00:00:00", status: "Scheduled", scheduled_remediation_date: "2026-03-15T00:00:00", notes: "Scheduled offboarding — tokens active until leaving date", notify_user_1w: false, notify_user_1d: false, creation: weekAgo },
+  { name: "OBC-MOCK-00001", employee: "HR-EMP-TEST-00030", employee_name: "Carlos Mendez", primary_email: "carlos.mendez@testcorp.com", event_type: "Offboard", effective_date: "2026-02-13T00:00:00", status: "Gaps Found", notes: "Post-offboard login detected", notify_user_1w: false, notify_user_1d: false, creation: weekAgo },
+  { name: "OBC-MOCK-00002", employee: "HR-EMP-TEST-00031", employee_name: "Nina Kowalski", primary_email: "nina.kowalski@testcorp.com", event_type: "Offboard", effective_date: "2026-02-13T00:00:00", status: "Gaps Found", notes: "Post-offboard login detected", notify_user_1w: false, notify_user_1d: false, creation: weekAgo },
+  { name: "OBC-MOCK-00003", employee: "HR-EMP-TEST-00032", employee_name: "Raj Sharma", primary_email: "raj.sharma@testcorp.com", event_type: "Offboard", effective_date: "2026-02-13T00:00:00", status: "Gaps Found", notes: "Lingering OAuth and ASP access", notify_user_1w: false, notify_user_1d: false, creation: weekAgo },
 ];
 
 // ── Access Artifacts ───────────────────────────────────────
 export const mockArtifacts: AccessArtifact[] = [
-  // Alice (A) — 3 OAuth tokens
-  { name: "ART-2025-00001", case: "OBC-2025-00001", artifact_type: "OAuthToken", subject_email: "alice.johnson@testcorp.com", status: "Active", app_display_name: "Google Drive", client_id: "client-google-drive-001", risk_level: "High", scopes_json: '["https://www.googleapis.com/auth/drive","https://www.googleapis.com/auth/drive.file"]', creation: monthAgo },
-  { name: "ART-2025-00002", case: "OBC-2025-00001", artifact_type: "OAuthToken", subject_email: "alice.johnson@testcorp.com", status: "Active", app_display_name: "Slack", client_id: "client-slack-001", risk_level: "Medium", scopes_json: '["https://www.googleapis.com/auth/gmail.readonly","https://www.googleapis.com/auth/calendar.readonly"]', creation: monthAgo },
-  { name: "ART-2025-00003", case: "OBC-2025-00001", artifact_type: "OAuthToken", subject_email: "alice.johnson@testcorp.com", status: "Active", app_display_name: "GitHub", client_id: "client-github-001", risk_level: "Critical", scopes_json: '["https://www.googleapis.com/auth/admin.directory.user","https://www.googleapis.com/auth/gmail.send"]', creation: monthAgo },
-  // Bob (B) — 2 ASPs
-  { name: "ART-2025-00004", case: "OBC-2025-00002", artifact_type: "ASP", subject_email: "bob.smith@testcorp.com", status: "Active", app_display_name: "Thunderbird Mail", risk_level: "Medium", creation: monthAgo },
-  { name: "ART-2025-00005", case: "OBC-2025-00002", artifact_type: "ASP", subject_email: "bob.smith@testcorp.com", status: "Active", app_display_name: "Outlook Desktop", risk_level: "Medium", creation: monthAgo },
-  // Charlie (C) — login event
-  { name: "ART-2025-00006", case: "OBC-2025-00003", artifact_type: "LoginEvent", subject_email: "charlie.brown@testcorp.com", status: "Active", app_display_name: "Google Login", risk_level: "High", metadata_json: '{"ip":"203.0.113.45","login_time":"2025-10-25T14:30:00","user_agent":"Chrome/119"}', creation: weekAgo },
-  // Diana (D) — AdminMFA + DWD
-  { name: "ART-2025-00007", case: "OBC-2025-00004", artifact_type: "AdminMFA", subject_email: "diana.prince@testcorp.com", status: "Active", app_display_name: "Admin Console", risk_level: "Critical", creation: monthAgo },
-  { name: "ART-2025-00008", case: "OBC-2025-00004", artifact_type: "DWDChange", subject_email: "diana.prince@testcorp.com", status: "Active", app_display_name: "Domain-Wide Delegation", risk_level: "Critical", metadata_json: '{"service_account":"sa@project.iam.gserviceaccount.com","scopes":["https://www.googleapis.com/auth/admin.directory.user"]}', creation: monthAgo },
-  // Grace (G) — 4 OAuth tokens
-  { name: "ART-2025-00009", case: "OBC-2025-00007", artifact_type: "OAuthToken", subject_email: "grace.lee@testcorp.com", status: "Active", app_display_name: "Google Drive", client_id: "client-google-drive-001", risk_level: "High", scopes_json: '["https://www.googleapis.com/auth/drive"]', creation: weekAgo },
-  { name: "ART-2025-00010", case: "OBC-2025-00007", artifact_type: "OAuthToken", subject_email: "grace.lee@testcorp.com", status: "Active", app_display_name: "Zoom", client_id: "client-zoom-001", risk_level: "Medium", scopes_json: '["https://www.googleapis.com/auth/calendar"]', creation: weekAgo },
-  { name: "ART-2025-00011", case: "OBC-2025-00007", artifact_type: "OAuthToken", subject_email: "grace.lee@testcorp.com", status: "Active", app_display_name: "Notion", client_id: "client-notion-001", risk_level: "Low", scopes_json: '["https://www.googleapis.com/auth/drive.readonly"]', creation: weekAgo },
-  { name: "ART-2025-00012", case: "OBC-2025-00007", artifact_type: "ASP", subject_email: "grace.lee@testcorp.com", status: "Active", app_display_name: "Apple Mail", risk_level: "Medium", creation: weekAgo },
-  // Henry (H) — mixed
-  { name: "ART-2025-00013", case: "OBC-2025-00008", artifact_type: "OAuthToken", subject_email: "henry.ford@testcorp.com", status: "Active", app_display_name: "Salesforce", client_id: "client-salesforce-001", risk_level: "High", scopes_json: '["https://www.googleapis.com/auth/contacts","https://www.googleapis.com/auth/gmail.send"]', creation: weekAgo },
-  // Ivy (I) — 6 artifacts (heavy OAuth user)
-  { name: "ART-2025-00014", case: "OBC-2025-00009", artifact_type: "OAuthToken", subject_email: "ivy.chen@testcorp.com", status: "Active", app_display_name: "Google Drive", client_id: "client-google-drive-001", risk_level: "High", scopes_json: '["https://www.googleapis.com/auth/drive","https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive.appdata"]', creation: weekAgo },
-  { name: "ART-2025-00015", case: "OBC-2025-00009", artifact_type: "OAuthToken", subject_email: "ivy.chen@testcorp.com", status: "Active", app_display_name: "Jira", client_id: "client-jira-001", risk_level: "Medium", scopes_json: '["https://www.googleapis.com/auth/calendar","https://www.googleapis.com/auth/tasks"]', creation: weekAgo },
-  { name: "ART-2025-00016", case: "OBC-2025-00009", artifact_type: "OAuthToken", subject_email: "ivy.chen@testcorp.com", status: "Active", app_display_name: "VS Code", client_id: "client-vscode-001", risk_level: "Low", scopes_json: '["https://www.googleapis.com/auth/userinfo.profile"]', creation: weekAgo },
-  { name: "ART-2025-00017", case: "OBC-2025-00009", artifact_type: "OAuthToken", subject_email: "ivy.chen@testcorp.com", status: "Active", app_display_name: "ChatGPT", client_id: "client-chatgpt-001", risk_level: "Medium", scopes_json: '["https://www.googleapis.com/auth/gmail.readonly"]', creation: weekAgo },
-  { name: "ART-2025-00018", case: "OBC-2025-00009", artifact_type: "ASP", subject_email: "ivy.chen@testcorp.com", status: "Active", app_display_name: "Thunderbird", risk_level: "Medium", creation: weekAgo },
-  { name: "ART-2025-00019", case: "OBC-2025-00009", artifact_type: "LoginEvent", subject_email: "ivy.chen@testcorp.com", status: "Active", app_display_name: "Google Login", risk_level: "High", metadata_json: '{"ip":"198.51.100.23","login_time":"2025-12-01T09:15:00","user_agent":"Firefox/120"}', creation: weekAgo },
-  // Jack (J)
-  { name: "ART-2025-00020", case: "OBC-2025-00010", artifact_type: "OAuthToken", subject_email: "jack.daniels@testcorp.com", status: "Active", app_display_name: "Dropbox", client_id: "client-dropbox-001", risk_level: "Medium", scopes_json: '["https://www.googleapis.com/auth/drive.readonly"]', creation: weekAgo },
-  // Hidden artifacts for system scan testing
-  { name: "ART-2025-00021", case: "", artifact_type: "OAuthToken", subject_email: "alice.johnson@testcorp.com", status: "Hidden", app_display_name: "Trello", client_id: "client-trello-001", risk_level: "Low", scopes_json: '["https://www.googleapis.com/auth/tasks"]', creation: weekAgo },
-  { name: "ART-2025-00022", case: "", artifact_type: "ASP", subject_email: "bob.smith@testcorp.com", status: "Hidden", app_display_name: "K-9 Mail", risk_level: "Medium", creation: weekAgo },
-  // Revoked artifacts (for restore testing)
-  { name: "ART-2025-00023", case: "OBC-2025-00001", artifact_type: "OAuthToken", subject_email: "alice.johnson@testcorp.com", status: "Revoked", app_display_name: "Figma", client_id: "client-figma-001", risk_level: "Low", scopes_json: '["https://www.googleapis.com/auth/userinfo.profile"]', creation: monthAgo },
-  // Active employees with OAuth (no cases — regular employees)
-  { name: "ART-2025-00024", case: "", artifact_type: "OAuthToken", subject_email: "karen.white@testcorp.com", status: "Active", app_display_name: "Google Drive", client_id: "client-google-drive-001", risk_level: "Low", scopes_json: '["https://www.googleapis.com/auth/drive"]', creation: weekAgo },
-  { name: "ART-2025-00025", case: "", artifact_type: "OAuthToken", subject_email: "liam.neeson@testcorp.com", status: "Active", app_display_name: "Slack", client_id: "client-slack-001", risk_level: "Low", scopes_json: '["https://www.googleapis.com/auth/gmail.readonly"]', creation: weekAgo },
-  { name: "ART-2025-00026", case: "", artifact_type: "OAuthToken", subject_email: "karen.white@testcorp.com", status: "Active", app_display_name: "Figma", client_id: "client-figma-001", risk_level: "Low", scopes_json: '["https://www.googleapis.com/auth/userinfo.profile"]', creation: weekAgo },
-  { name: "ART-2025-00027", case: "", artifact_type: "OAuthToken", subject_email: "monica.geller@testcorp.com", status: "Active", app_display_name: "Google Drive", client_id: "client-google-drive-001", risk_level: "Low", scopes_json: '["https://www.googleapis.com/auth/drive"]', creation: weekAgo },
-  { name: "ART-2025-00028", case: "", artifact_type: "OAuthToken", subject_email: "monica.geller@testcorp.com", status: "Active", app_display_name: "Zoom", client_id: "client-zoom-001", risk_level: "Low", scopes_json: '["https://www.googleapis.com/auth/calendar"]', creation: weekAgo },
-  { name: "ART-2025-00029", case: "", artifact_type: "OAuthToken", subject_email: "nathan.drake@testcorp.com", status: "Active", app_display_name: "Jira", client_id: "client-jira-001", risk_level: "Low", scopes_json: '["https://www.googleapis.com/auth/calendar"]', creation: weekAgo },
-  { name: "ART-2025-00030", case: "", artifact_type: "OAuthToken", subject_email: "peter.parker@testcorp.com", status: "Active", app_display_name: "VS Code", client_id: "client-vscode-001", risk_level: "Low", scopes_json: '["https://www.googleapis.com/auth/userinfo.profile"]', creation: weekAgo },
-  { name: "ART-2025-00031", case: "", artifact_type: "OAuthToken", subject_email: "olivia.pope@testcorp.com", status: "Active", app_display_name: "Salesforce", client_id: "client-salesforce-001", risk_level: "Medium", scopes_json: '["https://www.googleapis.com/auth/contacts","https://www.googleapis.com/auth/gmail.send"]', creation: weekAgo },
-  { name: "ART-2025-00032", case: "", artifact_type: "OAuthToken", subject_email: "olivia.pope@testcorp.com", status: "Active", app_display_name: "Google Drive", client_id: "client-google-drive-001", risk_level: "Low", scopes_json: '["https://www.googleapis.com/auth/drive"]', creation: weekAgo },
-  { name: "ART-2025-00033", case: "", artifact_type: "OAuthToken", subject_email: "rachel.green@testcorp.com", status: "Active", app_display_name: "Dropbox", client_id: "client-dropbox-001", risk_level: "Low", scopes_json: '["https://www.googleapis.com/auth/drive.readonly"]', creation: weekAgo },
-  { name: "ART-2025-00034", case: "", artifact_type: "ASP", subject_email: "quinn.hughes@testcorp.com", status: "Active", app_display_name: "Thunderbird Mail", risk_level: "Low", creation: weekAgo },
+  // Active employees — unlinked artifacts
+  { name: "ART-M-001", case: "", artifact_type: "OAuthToken", subject_email: "alex.rivera@testcorp.com", status: "Active", app_display_name: "Google Drive", client_id: "client-google-drive", risk_level: "High", scopes_json: '["https://www.googleapis.com/auth/drive"]', creation: weekAgo },
+  { name: "ART-M-002", case: "", artifact_type: "OAuthToken", subject_email: "alex.rivera@testcorp.com", status: "Active", app_display_name: "GitHub", client_id: "client-github", risk_level: "Critical", scopes_json: '["https://www.googleapis.com/auth/admin.directory.user"]', creation: weekAgo },
+  { name: "ART-M-003", case: "", artifact_type: "OAuthToken", subject_email: "alex.rivera@testcorp.com", status: "Active", app_display_name: "Slack", client_id: "client-slack", risk_level: "Medium", scopes_json: '["https://www.googleapis.com/auth/gmail.readonly"]', creation: weekAgo },
+  { name: "ART-M-004", case: "", artifact_type: "ASP", subject_email: "alex.rivera@testcorp.com", status: "Active", app_display_name: "Thunderbird Mail", risk_level: "Medium", creation: weekAgo },
+  { name: "ART-M-005", case: "", artifact_type: "OAuthToken", subject_email: "maya.patel@testcorp.com", status: "Active", app_display_name: "Notion", client_id: "client-notion", risk_level: "Low", creation: weekAgo },
+  { name: "ART-M-006", case: "", artifact_type: "OAuthToken", subject_email: "maya.patel@testcorp.com", status: "Active", app_display_name: "Figma", client_id: "client-figma", risk_level: "Medium", creation: weekAgo },
+  { name: "ART-M-007", case: "", artifact_type: "OAuthToken", subject_email: "maya.patel@testcorp.com", status: "Active", app_display_name: "Zoom", client_id: "client-zoom", risk_level: "Low", creation: weekAgo },
+  { name: "ART-M-008", case: "", artifact_type: "OAuthToken", subject_email: "james.obrien@testcorp.com", status: "Active", app_display_name: "Salesforce", client_id: "client-salesforce", risk_level: "High", creation: weekAgo },
+  { name: "ART-M-009", case: "", artifact_type: "OAuthToken", subject_email: "james.obrien@testcorp.com", status: "Active", app_display_name: "Jira", client_id: "client-jira", risk_level: "Medium", creation: weekAgo },
+  { name: "ART-M-010", case: "", artifact_type: "ASP", subject_email: "james.obrien@testcorp.com", status: "Active", app_display_name: "Outlook Desktop", risk_level: "Medium", creation: weekAgo },
+  { name: "ART-M-011", case: "", artifact_type: "OAuthToken", subject_email: "yuki.tanaka@testcorp.com", status: "Active", app_display_name: "Google Drive", client_id: "client-google-drive", risk_level: "High", creation: weekAgo },
+  { name: "ART-M-012", case: "", artifact_type: "OAuthToken", subject_email: "yuki.tanaka@testcorp.com", status: "Active", app_display_name: "ChatGPT", client_id: "client-chatgpt", risk_level: "Medium", creation: weekAgo },
+  { name: "ART-M-013", case: "", artifact_type: "OAuthToken", subject_email: "sofia.martinez@testcorp.com", status: "Active", app_display_name: "GitHub", client_id: "client-github", risk_level: "Critical", creation: weekAgo },
+  { name: "ART-M-014", case: "", artifact_type: "OAuthToken", subject_email: "sofia.martinez@testcorp.com", status: "Active", app_display_name: "Google Drive", client_id: "client-google-drive", risk_level: "High", creation: weekAgo },
+  { name: "ART-M-015", case: "", artifact_type: "ASP", subject_email: "sofia.martinez@testcorp.com", status: "Active", app_display_name: "K-9 Mail", risk_level: "Low", creation: weekAgo },
+  // Carlos Mendez — Left, with case
+  { name: "ART-M-016", case: "OBC-MOCK-00001", artifact_type: "OAuthToken", subject_email: "carlos.mendez@testcorp.com", status: "Active", app_display_name: "Google Drive", client_id: "client-google-drive", risk_level: "High", creation: weekAgo },
+  { name: "ART-M-017", case: "OBC-MOCK-00001", artifact_type: "OAuthToken", subject_email: "carlos.mendez@testcorp.com", status: "Active", app_display_name: "GitHub", client_id: "client-github", risk_level: "Critical", creation: weekAgo },
+  { name: "ART-M-018", case: "OBC-MOCK-00001", artifact_type: "OAuthToken", subject_email: "carlos.mendez@testcorp.com", status: "Active", app_display_name: "Slack", client_id: "client-slack", risk_level: "Medium", creation: weekAgo },
+  { name: "ART-M-019", case: "OBC-MOCK-00001", artifact_type: "ASP", subject_email: "carlos.mendez@testcorp.com", status: "Active", app_display_name: "Thunderbird Mail", risk_level: "Medium", creation: weekAgo },
+  { name: "ART-M-020", case: "OBC-MOCK-00001", artifact_type: "LoginEvent", subject_email: "carlos.mendez@testcorp.com", status: "Active", app_display_name: "Google Login", risk_level: "High", metadata_json: '{"ip":"203.0.113.77","login_time":"2026-02-18T14:30:00","user_agent":"Chrome/122"}', creation: weekAgo },
+  // Nina Kowalski — Left, with case
+  { name: "ART-M-021", case: "OBC-MOCK-00002", artifact_type: "OAuthToken", subject_email: "nina.kowalski@testcorp.com", status: "Active", app_display_name: "Salesforce", client_id: "client-salesforce", risk_level: "High", creation: weekAgo },
+  { name: "ART-M-022", case: "OBC-MOCK-00002", artifact_type: "OAuthToken", subject_email: "nina.kowalski@testcorp.com", status: "Active", app_display_name: "Notion", client_id: "client-notion", risk_level: "Low", creation: weekAgo },
+  { name: "ART-M-023", case: "OBC-MOCK-00002", artifact_type: "LoginEvent", subject_email: "nina.kowalski@testcorp.com", status: "Active", app_display_name: "Google Login", risk_level: "High", metadata_json: '{"ip":"198.51.100.42","login_time":"2026-02-19T09:15:00","user_agent":"Firefox/121"}', creation: weekAgo },
+  // Raj Sharma — Left, with case
+  { name: "ART-M-024", case: "OBC-MOCK-00003", artifact_type: "OAuthToken", subject_email: "raj.sharma@testcorp.com", status: "Active", app_display_name: "Google Drive", client_id: "client-google-drive", risk_level: "High", creation: weekAgo },
+  { name: "ART-M-025", case: "OBC-MOCK-00003", artifact_type: "OAuthToken", subject_email: "raj.sharma@testcorp.com", status: "Active", app_display_name: "Jira", client_id: "client-jira", risk_level: "Medium", creation: weekAgo },
+  { name: "ART-M-026", case: "OBC-MOCK-00003", artifact_type: "ASP", subject_email: "raj.sharma@testcorp.com", status: "Active", app_display_name: "Outlook Desktop", risk_level: "Medium", creation: weekAgo },
+  // Base active employees
+  { name: "ART-M-027", case: "", artifact_type: "OAuthToken", subject_email: "john.active@example.com", status: "Active", app_display_name: "Google Drive", client_id: "client-google-drive", risk_level: "Low", creation: monthAgo },
+  { name: "ART-M-028", case: "", artifact_type: "OAuthToken", subject_email: "john.active@example.com", status: "Active", app_display_name: "Slack", client_id: "client-slack", risk_level: "Low", creation: monthAgo },
+  { name: "ART-M-029", case: "", artifact_type: "OAuthToken", subject_email: "sarah.active@example.com", status: "Active", app_display_name: "Google Drive", client_id: "client-google-drive", risk_level: "Low", creation: monthAgo },
+  { name: "ART-M-030", case: "", artifact_type: "OAuthToken", subject_email: "sarah.active@example.com", status: "Active", app_display_name: "Figma", client_id: "client-figma", risk_level: "Low", creation: monthAgo },
+  { name: "ART-M-031", case: "", artifact_type: "OAuthToken", subject_email: "sarah.active@example.com", status: "Active", app_display_name: "Zoom", client_id: "client-zoom", risk_level: "Low", creation: monthAgo },
+  { name: "ART-M-032", case: "", artifact_type: "OAuthToken", subject_email: "mike.active@example.com", status: "Active", app_display_name: "Salesforce", client_id: "client-salesforce", risk_level: "Medium", creation: monthAgo },
+  { name: "ART-M-033", case: "", artifact_type: "OAuthToken", subject_email: "mike.active@example.com", status: "Active", app_display_name: "Jira", client_id: "client-jira", risk_level: "Low", creation: monthAgo },
+  { name: "ART-M-034", case: "", artifact_type: "OAuthToken", subject_email: "lisa.active@example.com", status: "Active", app_display_name: "Google Drive", client_id: "client-google-drive", risk_level: "Low", creation: monthAgo },
+  { name: "ART-M-035", case: "", artifact_type: "OAuthToken", subject_email: "lisa.active@example.com", status: "Active", app_display_name: "Notion", client_id: "client-notion", risk_level: "Low", creation: monthAgo },
+  { name: "ART-M-036", case: "", artifact_type: "OAuthToken", subject_email: "emma.active@example.com", status: "Active", app_display_name: "Google Drive", client_id: "client-google-drive", risk_level: "Low", creation: monthAgo },
+  { name: "ART-M-037", case: "", artifact_type: "OAuthToken", subject_email: "emma.active@example.com", status: "Active", app_display_name: "GitHub", client_id: "client-github", risk_level: "Medium", creation: monthAgo },
+  { name: "ART-M-038", case: "", artifact_type: "OAuthToken", subject_email: "emma.active@example.com", status: "Active", app_display_name: "Figma", client_id: "client-figma", risk_level: "Low", creation: monthAgo },
+  { name: "ART-M-039", case: "", artifact_type: "OAuthToken", subject_email: "emma.active@example.com", status: "Active", app_display_name: "Slack", client_id: "client-slack", risk_level: "Low", creation: monthAgo },
 ];
 
 // ── Findings ───────────────────────────────────────────────
 export const mockFindings: Finding[] = [
-  // Alice
-  { name: "FND-2025-00001", case: "OBC-2025-00001", finding_type: "LingeringOAuthGrant", severity: "Critical", summary: "OAuth grant for Google Drive discovered — full drive access persists after offboarding.", recommended_action: "Revoke the OAuth token for Google Drive immediately.", creation: monthAgo },
-  { name: "FND-2025-00002", case: "OBC-2025-00001", finding_type: "LingeringOAuthGrant", severity: "High", summary: "OAuth grant for GitHub with admin.directory access still active.", recommended_action: "Revoke the GitHub OAuth token.", creation: monthAgo },
-  // Bob
-  { name: "FND-2025-00003", case: "OBC-2025-00002", finding_type: "LingeringASP", severity: "Medium", summary: "App-Specific Password for Thunderbird Mail still active.", recommended_action: "Delete the ASP for Thunderbird.", creation: monthAgo },
-  // Charlie
-  { name: "FND-2025-00004", case: "OBC-2025-00003", finding_type: "PostOffboardLogin", severity: "High", summary: "Post-offboard login detected from IP 203.0.113.45 via Chrome.", recommended_action: "Sign out all sessions and investigate.", creation: weekAgo },
-  // Diana
-  { name: "FND-2025-00005", case: "OBC-2025-00004", finding_type: "AdminMFAWeak", severity: "Critical", summary: "Admin account without strong 2FA — only SMS verification enabled.", recommended_action: "Enforce hardware security key for admin accounts.", creation: monthAgo },
-  { name: "FND-2025-00006", case: "OBC-2025-00004", finding_type: "DWDHighRisk", severity: "Critical", summary: "Domain-Wide Delegation grant to service account with admin.directory scope.", recommended_action: "Review and restrict DWD scopes.", creation: monthAgo },
-  // Grace
-  { name: "FND-2025-00007", case: "OBC-2025-00007", finding_type: "LingeringOAuthGrant", severity: "High", summary: "OAuth grant for Google Drive persists after offboarding.", recommended_action: "Revoke Drive token.", creation: weekAgo },
-  { name: "FND-2025-00008", case: "OBC-2025-00007", finding_type: "LingeringOAuthGrant", severity: "Medium", summary: "OAuth grant for Zoom with calendar access.", recommended_action: "Revoke Zoom token.", creation: weekAgo },
-  { name: "FND-2025-00009", case: "OBC-2025-00007", finding_type: "LingeringASP", severity: "Medium", summary: "ASP for Apple Mail still active.", recommended_action: "Delete the ASP.", creation: weekAgo },
-  // Henry
-  { name: "FND-2025-00010", case: "OBC-2025-00008", finding_type: "LingeringOAuthGrant", severity: "High", summary: "OAuth grant for Salesforce with contacts and gmail.send access.", recommended_action: "Revoke Salesforce token.", creation: weekAgo },
-  // Ivy (heavy)
-  { name: "FND-2025-00011", case: "OBC-2025-00009", finding_type: "LingeringOAuthGrant", severity: "Critical", summary: "OAuth grant for Google Drive with full drive + appdata access.", recommended_action: "Revoke all Drive tokens immediately.", creation: weekAgo },
-  { name: "FND-2025-00012", case: "OBC-2025-00009", finding_type: "LingeringOAuthGrant", severity: "Medium", summary: "OAuth grant for Jira with calendar and tasks access.", recommended_action: "Revoke Jira token.", creation: weekAgo },
-  { name: "FND-2025-00013", case: "OBC-2025-00009", finding_type: "PostOffboardLogin", severity: "High", summary: "Post-offboard login detected from IP 198.51.100.23 via Firefox.", recommended_action: "Sign out all sessions.", creation: weekAgo },
-  { name: "FND-2025-00014", case: "OBC-2025-00009", finding_type: "LingeringASP", severity: "Medium", summary: "ASP for Thunderbird still active after offboarding.", recommended_action: "Delete ASP.", creation: weekAgo },
-  // Jack
-  { name: "FND-2025-00015", case: "OBC-2025-00010", finding_type: "LingeringOAuthGrant", severity: "Medium", summary: "OAuth grant for Dropbox with drive.readonly access.", recommended_action: "Revoke Dropbox token.", creation: weekAgo },
-  // Medium/Low findings (previously missing for non-high artifacts)
-  { name: "FND-2025-00017", case: "OBC-2025-00001", finding_type: "LingeringOAuthGrant", severity: "Medium", summary: "OAuth grant for Slack with gmail.readonly and calendar.readonly access still active.", recommended_action: "Revoke Slack token.", creation: monthAgo },
-  { name: "FND-2025-00018", case: "OBC-2025-00002", finding_type: "LingeringASP", severity: "Medium", summary: "App-Specific Password for Outlook Desktop still active.", recommended_action: "Delete the ASP for Outlook.", creation: monthAgo },
-  { name: "FND-2025-00019", case: "OBC-2025-00007", finding_type: "LingeringOAuthGrant", severity: "Low", summary: "OAuth grant for Notion with drive.readonly access — low risk but should be cleaned up.", recommended_action: "Revoke Notion token.", creation: weekAgo },
-  { name: "FND-2025-00020", case: "OBC-2025-00009", finding_type: "LingeringOAuthGrant", severity: "Low", summary: "OAuth grant for VS Code with userinfo.profile scope only.", recommended_action: "Revoke VS Code token.", creation: weekAgo },
-  { name: "FND-2025-00021", case: "OBC-2025-00009", finding_type: "LingeringOAuthGrant", severity: "Medium", summary: "OAuth grant for ChatGPT with gmail.readonly access.", recommended_action: "Revoke ChatGPT token.", creation: weekAgo },
-  { name: "FND-2025-00022", case: "OBC-2025-00010", finding_type: "LingeringOAuthGrant", severity: "Medium", summary: "OAuth grant for Dropbox with drive.readonly access — medium risk.", recommended_action: "Revoke Dropbox token.", creation: weekAgo },
-  // Closed findings (Frank — remediated)
-  { name: "FND-2025-00016", case: "OBC-2025-00006", finding_type: "LingeringOAuthGrant", severity: "High", summary: "OAuth grant for Slack — remediated.", recommended_action: "None — resolved.", closed_at: monthAgo, creation: monthAgo },
+  // Carlos Mendez
+  { name: "FND-M-001", case: "OBC-MOCK-00001", finding_type: "LingeringOAuthGrant", severity: "Critical", summary: "OAuth grant for GitHub with admin scope persists after offboarding.", recommended_action: "Revoke the GitHub OAuth token.", creation: weekAgo },
+  { name: "FND-M-002", case: "OBC-MOCK-00001", finding_type: "LingeringOAuthGrant", severity: "High", summary: "OAuth grant for Google Drive with full drive access.", recommended_action: "Revoke the Google Drive token.", creation: weekAgo },
+  { name: "FND-M-003", case: "OBC-MOCK-00001", finding_type: "LingeringASP", severity: "Medium", summary: "App-Specific Password for Thunderbird still active.", recommended_action: "Delete the ASP.", creation: weekAgo },
+  { name: "FND-M-004", case: "OBC-MOCK-00001", finding_type: "PostOffboardLogin", severity: "High", summary: "Post-offboard login detected from IP 203.0.113.77 via Chrome.", recommended_action: "Sign out all sessions and investigate.", creation: weekAgo },
+  // Nina Kowalski
+  { name: "FND-M-005", case: "OBC-MOCK-00002", finding_type: "LingeringOAuthGrant", severity: "High", summary: "OAuth grant for Salesforce with contacts access persists.", recommended_action: "Revoke Salesforce token.", creation: weekAgo },
+  { name: "FND-M-006", case: "OBC-MOCK-00002", finding_type: "PostOffboardLogin", severity: "High", summary: "Post-offboard login detected from IP 198.51.100.42 via Firefox.", recommended_action: "Sign out all sessions.", creation: weekAgo },
+  // Raj Sharma
+  { name: "FND-M-007", case: "OBC-MOCK-00003", finding_type: "LingeringOAuthGrant", severity: "High", summary: "OAuth grant for Google Drive with full drive access from former IT admin.", recommended_action: "Revoke the Google Drive token.", creation: weekAgo },
+  { name: "FND-M-008", case: "OBC-MOCK-00003", finding_type: "LingeringASP", severity: "Medium", summary: "ASP for Outlook Desktop still active after offboarding.", recommended_action: "Delete ASP.", creation: weekAgo },
 ];
 
 // ── Audit Logs ─────────────────────────────────────────────
 export const mockAuditLogs: UnifiedAuditLogEntry[] = [
-  { name: "AUD-2025-00001", actor_user: "Administrator", action_type: "CaseCreated", target_email: "alice.johnson@testcorp.com", result: "Success", request_json: '{"case":"OBC-2025-00001"}', timestamp: monthAgo, creation: monthAgo },
-  { name: "AUD-2025-00006", actor_user: "Administrator", action_type: "RemediationStarted", target_email: "frank.castle@testcorp.com", result: "Success", request_json: '{"case":"OBC-2025-00006","action":"full_bundle"}', timestamp: monthAgo, creation: monthAgo },
-  { name: "AUD-2025-00007", actor_user: "Administrator", action_type: "RemediationCompleted", target_email: "frank.castle@testcorp.com", result: "Success", request_json: '{"case":"OBC-2025-00006","action":"full_bundle","artifacts_remediated":2}', timestamp: monthAgo, creation: monthAgo },
-  { name: "AUD-2025-00008", actor_user: "Administrator", action_type: "TokenRevoked", target_email: "alice.johnson@testcorp.com", result: "Success", request_json: '{"artifact":"ART-2025-00023","client_id":"client-figma-001"}', timestamp: monthAgo, creation: monthAgo },
+  { name: "AUD-M-001", actor_user: "Administrator", action_type: "CaseCreated", target_email: "carlos.mendez@testcorp.com", result: "Success", request_json: '{"case":"OBC-MOCK-00001"}', timestamp: weekAgo, creation: weekAgo },
+  { name: "AUD-M-002", actor_user: "Administrator", action_type: "CaseCreated", target_email: "nina.kowalski@testcorp.com", result: "Success", request_json: '{"case":"OBC-MOCK-00002"}', timestamp: weekAgo, creation: weekAgo },
+  { name: "AUD-M-003", actor_user: "Administrator", action_type: "CaseCreated", target_email: "raj.sharma@testcorp.com", result: "Success", request_json: '{"case":"OBC-MOCK-00003"}', timestamp: weekAgo, creation: weekAgo },
+  { name: "AUD-M-004", actor_user: "Administrator", action_type: "ScanFinished", target_email: "carlos.mendez@testcorp.com", result: "Success", request_json: '{"case":"OBC-MOCK-00001","active_artifacts":5}', timestamp: weekAgo, creation: weekAgo },
 ];
 
 // ── Settings ───────────────────────────────────────────────
@@ -151,7 +121,7 @@ export const mockSettings: OGMSettings = {
   auto_remediate_on_offboard: true,
   background_scan_enabled: true,
   auto_create_case_on_leave: true,
-  background_scan_interval: "Every 5 Minutes",
+  background_scan_interval: "Every 15 Minutes",
   remediation_check_interval: "Every 5 Minutes",
   notify_on_new_findings: true,
   notify_on_remediation: true,

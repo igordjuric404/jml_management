@@ -73,15 +73,6 @@ const riskVariant: Record<
   Low: "secondary",
 };
 
-function getAllArtifacts(artifacts: CaseDetail["artifacts"]): AccessArtifact[] {
-  return [
-    ...(artifacts.tokens ?? []),
-    ...(artifacts.asps ?? []),
-    ...(artifacts.login_events ?? []),
-    ...(artifacts.other ?? []),
-  ];
-}
-
 export default function CaseDetailPage() {
   const params = useParams();
   const id = params.id as string;
@@ -97,10 +88,16 @@ export default function CaseDetailPage() {
   const [editingSchedule, setEditingSchedule] = useState(false);
   const [scheduleDate, setScheduleDate] = useState("");
 
-  const allArtifacts = useMemo(
-    () => (data?.artifacts ? getAllArtifacts(data.artifacts) : []),
-    [data]
-  );
+  const allArtifacts = useMemo(() => {
+    if (!data?.artifacts) return [];
+    const a = data.artifacts;
+    return [
+      ...(a.tokens ?? []),
+      ...(a.asps ?? []),
+      ...(a.login_events ?? []),
+      ...(a.other ?? []),
+    ] as AccessArtifact[];
+  }, [data]);
 
   const activeArtifacts = allArtifacts.filter((a) => a.status === "Active");
 
@@ -148,7 +145,17 @@ export default function CaseDetailPage() {
     );
   }
 
-  const { case: c, artifacts, findings, audit_logs } = data;
+  const { case: c, artifacts: rawArtifacts, findings: rawFindings, audit_logs } = data;
+
+  // Defensive: API may return different structure or missing keys
+  const artifacts = {
+    tokens: (rawArtifacts?.tokens ?? []) as AccessArtifact[],
+    asps: (rawArtifacts?.asps ?? []) as AccessArtifact[],
+    login_events: (rawArtifacts?.login_events ?? []) as AccessArtifact[],
+    other: (rawArtifacts?.other ?? []) as AccessArtifact[],
+    total: rawArtifacts?.total ?? 0,
+  };
+  const findings = (rawFindings ?? []) as Finding[];
 
   return (
     <div className="space-y-6">
@@ -351,53 +358,69 @@ export default function CaseDetailPage() {
               </Button>
             </div>
           )}
-          <ArtifactGroups artifacts={artifacts} selectedArtifacts={selectedArtifacts} onToggle={toggleArtifact} onToggleAllInGroup={toggleAllInGroup} />
+          {allArtifacts.length > 0 ? (
+            <ArtifactGroups artifacts={artifacts} selectedArtifacts={selectedArtifacts} onToggle={toggleArtifact} onToggleAllInGroup={toggleAllInGroup} />
+          ) : (
+            <Card>
+              <CardContent className="py-12 text-center text-muted-foreground">
+                <p className="text-sm">No artifacts found for this case.</p>
+                <p className="text-xs mt-1">Run a scan to discover OAuth tokens, ASPs, and login events.</p>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="findings">
           <Card>
             <CardContent className="pt-6">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Severity</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Summary</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {findings?.map((f: Finding) => (
-                    <TableRow key={f.name}>
-                      <TableCell className="font-medium">
-                        <Link
-                          href={`/findings?finding=${encodeURIComponent(f.name)}`}
-                          className="text-primary hover:underline"
-                        >
-                          {f.name}
-                        </Link>
-                      </TableCell>
-                      <TableCell>{f.finding_type}</TableCell>
-                      <TableCell>
-                        <Badge
-                          variant={severityVariant[f.severity] ?? "secondary"}
-                        >
-                          {f.severity}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={f.closed_at ? "secondary" : "default"}>
-                          {f.closed_at ? "Closed" : "Open"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="max-w-xs truncate">
-                        {f.summary}
-                      </TableCell>
+              {findings.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Type</TableHead>
+                      <TableHead>Severity</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Summary</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {findings.map((f: Finding) => (
+                      <TableRow key={f.name}>
+                        <TableCell className="font-medium">
+                          <Link
+                            href={`/findings?finding=${encodeURIComponent(f.name)}`}
+                            className="text-primary hover:underline"
+                          >
+                            {f.name}
+                          </Link>
+                        </TableCell>
+                        <TableCell>{f.finding_type}</TableCell>
+                        <TableCell>
+                          <Badge
+                            variant={severityVariant[f.severity] ?? "secondary"}
+                          >
+                            {f.severity}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant={f.closed_at ? "secondary" : "default"}>
+                            {f.closed_at ? "Closed" : "Open"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="max-w-xs truncate">
+                          {f.summary}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="py-12 text-center text-muted-foreground">
+                  <p className="text-sm">No findings for this case.</p>
+                  <p className="text-xs mt-1">Run a scan to detect lingering OAuth grants, ASPs, or post-offboard logins.</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

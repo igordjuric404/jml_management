@@ -55,7 +55,7 @@ describe("Cases API integration", () => {
 
   describe("GET /api/cases/[id]", () => {
     it("returns case detail for valid id", async () => {
-      const caseId = "OBC-2025-00001";
+      const caseId = "OBC-MOCK-00001";
       const res = await caseDetailRoute.GET(
         {} as NextRequest,
         { params: Promise.resolve({ id: caseId }) }
@@ -84,7 +84,7 @@ describe("Cases API integration", () => {
 
   describe("POST /api/cases/[id]/scan", () => {
     it("triggers scan", async () => {
-      const caseId = "OBC-2025-00001";
+      const caseId = "OBC-MOCK-00001";
       const res = await caseScanRoute.POST(
         {} as NextRequest,
         { params: Promise.resolve({ id: caseId }) }
@@ -100,8 +100,8 @@ describe("Cases API integration", () => {
 
   describe("POST /api/cases/[id]/remediate", () => {
     it("executes remediation", async () => {
-      const caseId = "OBC-2025-00001";
-      const req = new NextRequest("http://localhost/api/cases/OBC-2025-00001/remediate", {
+      const caseId = "OBC-MOCK-00001";
+      const req = new NextRequest("http://localhost/api/cases/OBC-MOCK-00001/remediate", {
         method: "POST",
         body: JSON.stringify({ action: "full_bundle" }),
       });

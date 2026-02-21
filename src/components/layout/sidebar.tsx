@@ -48,7 +48,7 @@ export function Sidebar() {
         {!collapsed && (
           <Link href="/dashboard" className="flex items-center gap-2">
             <Shield className="h-6 w-6 text-primary" />
-            <span className="font-semibold text-lg">JML</span>
+            <span className="text-lg tracking-tight"><span className="font-extrabold">Revoke</span><span className="font-light">it</span></span>
           </Link>
         )}
         <button

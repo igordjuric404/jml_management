@@ -1,3 +1,3 @@
-export const production = {"NEXT_PUBLIC_FRAPPE_URL":"http://localhost:8000","NEXT_PUBLIC_USE_MOCK":"true","NEXT_PUBLIC_APP_NAME":"JML Management"};
-export const development = {"NEXT_PUBLIC_FRAPPE_URL":"http://localhost:8000","NEXT_PUBLIC_USE_MOCK":"true","NEXT_PUBLIC_APP_NAME":"JML Management"};
+export const production = {"NEXT_PUBLIC_FRAPPE_URL":"http://localhost:8000","NEXT_PUBLIC_APP_NAME":"JML Management","FRAPPE_API_KEY":"999aa7ccb35f102","FRAPPE_API_SECRET":"2fa32d304438285","OPENROUTER_API_KEY":"","RESEND_API_KEY":"re_CBCLXGCX_Kzy1Fw4QMrB4HDYDJ534NPxc","NOTIFICATION_SENDER_EMAIL":"offboarding@resend.dev","NOTIFICATION_RECIPIENT_EMAIL":"igordjuric404@gmail.com"};
+export const development = {"NEXT_PUBLIC_FRAPPE_URL":"http://localhost:8000","NEXT_PUBLIC_APP_NAME":"JML Management","FRAPPE_API_KEY":"999aa7ccb35f102","FRAPPE_API_SECRET":"2fa32d304438285","OPENROUTER_API_KEY":"","RESEND_API_KEY":"re_CBCLXGCX_Kzy1Fw4QMrB4HDYDJ534NPxc","NOTIFICATION_SENDER_EMAIL":"offboarding@resend.dev","NOTIFICATION_RECIPIENT_EMAIL":"igordjuric404@gmail.com"};
 export const test = {};

@@ -72,7 +72,7 @@ export interface Employee {
   employee_id: string;
   employee_name: string;
   company_email: string;
-  emp_status: "Active" | "Left" | "Suspended";
+  emp_status: "Active" | "To Leave" | "Left" | "Suspended";
   date_of_joining?: string;
   relieving_date?: string;
   department?: string;
@@ -100,13 +100,15 @@ export interface DashboardStats {
   kpis: {
     pending_scan: number;
     critical_gaps: number;
-    oauth_grants_7d: number;
-    oauth_grants_30d: number;
-    post_offboard_logins_7d: number;
-    post_offboard_logins_30d: number;
+    oauth_grants: number;
+    post_offboard_logins: number;
     total_cases: number;
     total_findings: number;
     total_artifacts: number;
+    oauth_grants_7d?: number;
+    oauth_grants_30d?: number;
+    post_offboard_logins_7d?: number;
+    post_offboard_logins_30d?: number;
   };
   top_oauth_apps: OAuthAppSummary[];
   risky_cases: RiskyCaseSummary[];

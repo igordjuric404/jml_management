@@ -143,27 +143,15 @@ export class MockProvider implements HrProvider {
 
   async getDashboardStats(): Promise<DashboardStats> {
     this._checkOverdueRemediations();
-    const now = Date.now();
-    const sevenDays = 7 * 86400000;
-    const thirtyDays = 30 * 86400000;
 
     const pendingScan = cases.filter(c => ["Draft", "Scheduled"].includes(c.status)).length;
     const criticalFindings = findings.filter(f => f.severity === "Critical" && !f.closed_at);
     const criticalCaseNames = new Set(criticalFindings.map(f => f.case));
 
-    const activeTokens7d = artifacts.filter(a =>
-      a.artifact_type === "OAuthToken" && a.status === "Active" &&
-      a.creation && (now - new Date(a.creation).getTime()) < sevenDays
-    );
-    const activeTokens30d = artifacts.filter(a =>
-      a.artifact_type === "OAuthToken" && a.status === "Active" &&
-      a.creation && (now - new Date(a.creation).getTime()) < thirtyDays
-    );
-
-    const loginFindings7d = findings.filter(f =>
-      ["PostOffboardLogin", "PostOffboardSuspiciousLogin"].includes(f.finding_type) &&
-      f.creation && (now - new Date(f.creation).getTime()) < sevenDays
-    );
+    const oauthGrants = artifacts.filter(a => a.artifact_type === "OAuthToken" && a.status === "Active").length;
+    const postOffboardLogins = findings.filter(f =>
+      ["PostOffboardLogin", "PostOffboardSuspiciousLogin"].includes(f.finding_type) && !f.closed_at
+    ).length;
 
     const topApps = this._getTopApps();
 
@@ -188,10 +176,8 @@ export class MockProvider implements HrProvider {
       kpis: {
         pending_scan: pendingScan,
         critical_gaps: criticalCaseNames.size,
-        oauth_grants_7d: activeTokens7d.length,
-        oauth_grants_30d: activeTokens30d.length,
-        post_offboard_logins_7d: loginFindings7d.length,
-        post_offboard_logins_30d: loginFindings7d.length,
+        oauth_grants: oauthGrants,
+        post_offboard_logins: postOffboardLogins,
         total_cases: cases.length,
         total_findings: findings.length,
         total_artifacts: artifacts.length,

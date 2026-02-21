@@ -1,160 +1,70 @@
-# JML Management — Execution Log
+# Execution Log — Chatbot Rewrite (Legacy-Style Knowledge-Based Responses)
 
-## Phase Status Overview
+## Phases
 
-| Phase | Name | Goal | Status |
-|-------|------|------|--------|
-| 1 | Floating Chatbot + Fix Chat | Persistent chat FAB + intelligent responses | Done |
-| 2 | Docs Page Redesign | Sidebar nav, subsections, typography | Done |
-| 3 | Table Row Click Navigation | Click anywhere on row to open details | Done |
-| 4 | Fix "Run Scheduled Now" | Only show for scheduled cases | Done |
-| 5 | Fix Findings Detail View | Detail view renders on finding click | Done |
-| 6 | Fix Artifacts Detail View | Detail view renders on artifact click | Done |
-| 7 | Findings Remediation Actions | Remediate findings from list/detail | Done |
-| 8 | Finding Remediated Status | Remediated status + medium/low findings | Done |
-| 9 | Custom Confirmation Dialogs | Replace confirm()/alert() with toasts | Done |
-| 10 | Fix Employee Data Consistency | Stale counts after revoke | Done |
-| 11 | Employee Detail Artifacts Table | Add artifacts table, reorder sections | Done |
-| 12 | Fix Settings Persistence | Intervals persist across refresh | Done |
-| 13 | Table Column Sorting | Sortable columns with arrows | Done |
-| 14 | Email Notification Integration | Free email service for critical findings | Done |
-| 15 | Test Automations | Validate scheduler intervals | Done |
-| 16 | Frappe Integration E2E Test | Full pipeline test | Done |
+### Phase 1: Create Chatbot Knowledge Base Module
+- **Goal:** Create `src/lib/chatbot.ts` with DOCS_KNOWLEDGE, keyword search, OpenRouter LLM integration, and local fallback
+- **Status:** Done
+- **Checklist:**
+  - [x] Create DOCS_KNOWLEDGE dictionary adapted for jml_management URLs
+  - [x] Implement keyword-based search (_searchKnowledge)
+  - [x] Implement live data needs detection (_needsLiveData) with navigational exclusion
+  - [x] Implement live data gathering from mock data (_getLiveData)
+  - [x] Implement OpenRouter LLM call with system prompt
+  - [x] Implement local fallback answer
+  - [x] Export unified chat() function
 
----
+### Phase 2: Rewrite MockProvider.chat()
+- **Goal:** Replace data-dumping chat with knowledge-based concise navigational responses
+- **Status:** Done
+- **Checklist:**
+  - [x] Replace the entire chat() method with knowledge-based module call
+  - [x] Wire up LiveDataProvider interface for mock data statistics
+  - [x] Sources use navigational doc titles (not raw data links)
 
-## Detailed Phase Logs
+### Phase 3: Update Chat API Route
+- **Goal:** Enhance the API route to use OpenRouter when available
+- **Status:** Done
+- **Checklist:**
+  - [x] Update route.ts to use chatbot module for LLM-enhanced responses when OPENROUTER_API_KEY is set
+  - [x] Fallback to provider.chat() when no API key
 
-### Phase 1: Floating Chatbot + Fix Chat — DONE
-**Files modified:**
-- `src/components/chat-widget.tsx` (NEW) — floating FAB + chat window overlay
-- `src/app/(app)/layout.tsx` — integrated ChatWidget into app layout
-- `src/components/layout/sidebar.tsx` — removed `/chat` nav entry (widget replaces it)
-- `src/lib/providers/frappe/mock-provider.ts` — rewrote `chat()` method with keyword-based responses using live mock data
+### Phase 4: Testing
+- **Goal:** Verify chatbot gives legacy-style responses
+- **Status:** Done
+- **Checklist:**
+  - [x] "where are the artifacts stored?" → navigational answer (no data dump)
+  - [x] "how many cases are there?" → live data + case doc content
+  - [x] "what is remediation?" → concise explanation with URLs
+  - [x] "where can I find the audit log?" → navigational answer with URL
+  - [x] "how do I scan for threats?" → scanning explanation with URLs
+  - [x] "hello" → fallback with topic suggestions
+  - [x] Build passes (exit 0)
 
-**Verified:**
-- Chat API returns contextual answers for: audit logs, employees, remediation, settings, scans, cases, artifacts, findings, docs/help
-- "Where are the audit logs stored?" now returns actual log entries instead of canned greeting
-- Chat widget renders as floating button on all pages
-- No lint errors
+## Phase Completion Summaries
 
-### Phase 2: Docs Page Redesign — DONE
-**Files modified:**
-- `src/app/(app)/docs/page.tsx` — full rewrite with sticky sidebar, subsection navigation, breadcrumbs, prev/next page links, prose-styled content
+### Phase 1 — Complete
+- Created `src/lib/chatbot.ts` with:
+  - `DOCS_KNOWLEDGE` dictionary: 11 entries (overview, remediation, findings, scanning, automation, cases, artifacts, employees, apps, audit, navigation) adapted for jml_management URLs
+  - `searchKnowledge()`: keyword + word-in-content scoring, returns top 3
+  - `needsLiveData()`: checks DATA_KEYWORDS but excludes navigational questions
+  - `getLiveDataString()`: queries a LiveDataProvider interface for stats
+  - `chatWithLLM()`: OpenRouter call with system prompt ("concise 2-4 sentences, include URLs")
+  - `localAnswer()`: no-LLM fallback using top matched doc
+  - `chat()`: unified entry point
 
-**Verified:**
-- Sidebar renders all sections with icons and subsection links
-- Content switches on section/subsection click
-- Breadcrumbs show current path
+### Phase 2 — Complete
+- Replaced MockProvider.chat() (155 lines of data-dumping if/else) with 20 lines that wire up a LiveDataProvider and call `knowledgeChat()`
+- Added `import type { LiveDataProvider } from "@/lib/chatbot"` at top of file
 
-### Phase 3: Table Row Click Navigation — DONE
-**Files modified:**
-- `src/app/(app)/cases/page.tsx` — added `onClick` on `<TableRow>` with `router.push`
-- `src/app/(app)/findings/page.tsx` — same pattern
-- `src/app/(app)/artifacts/page.tsx` — same pattern, `e.stopPropagation()` on checkbox
-- `src/app/(app)/employees/page.tsx` — same pattern, `e.stopPropagation()` on checkbox
+### Phase 3 — Complete
+- Updated `src/app/api/chat/route.ts` to check `OPENROUTER_API_KEY` and use knowledge-based chat directly when available, falling back to provider.chat() otherwise
 
-### Phase 4: Fix "Run Scheduled Now" Button — DONE
-**Files modified:**
-- `src/app/(app)/cases/[id]/page.tsx` — conditionally render button only when `status === "Scheduled" && scheduled_remediation_date`
+### Phase 4 — Complete
+- All test queries return concise, navigational responses matching the legacy style
+- Build passes cleanly
 
-### Phase 5: Fix Findings Detail View — DONE
-**Files modified:**
-- `src/hooks/use-api.ts` — added `useFindingDetail(id)` hook
-- `src/app/(app)/findings/page.tsx` — added `FindingDetailView` component, conditionally rendered via `?finding=` search param
-
-### Phase 6: Fix Artifacts Detail View — DONE
-**Files modified:**
-- `src/hooks/use-api.ts` — added `useArtifactDetail(id)` hook
-- `src/app/(app)/artifacts/page.tsx` — added `ArtifactDetailView` component, conditionally rendered via `?artifact=` search param
-
-### Phase 7: Findings Remediation Actions — DONE
-**Files modified:**
-- `src/lib/providers/interface.ts` — added `remediateFinding(name)` to `HrProvider`
-- `src/lib/providers/frappe/provider.ts` — implemented `remediateFinding` via Frappe API
-- `src/lib/providers/frappe/mock-provider.ts` — implemented `remediateFinding` in mock
-- `src/hooks/use-api.ts` — added `useRemediateFinding()` mutation hook
-- `src/app/api/findings/[id]/remediate/route.ts` (NEW) — API route for finding remediation
-- `src/app/(app)/findings/page.tsx` — added "Remediate Finding" button to detail view
-
-### Phase 8: Finding Remediated Status + Medium/Low — DONE
-**Files modified:**
-- `src/lib/providers/frappe/mock-data.ts` — added 6 new findings with Medium/Low severity
-- `src/lib/providers/frappe/mock-provider.ts` — dynamic `getEmployeeList()` computes live counts
-
-### Phase 9: Custom Confirmation Dialogs — DONE
-**Files modified:**
-- `src/components/confirm-dialog.tsx` (NEW) — reusable confirmation dialog with `confirmAction()` API
-- `src/app/(app)/layout.tsx` — mounted `<ConfirmDialog />` globally
-- `src/app/(app)/cases/[id]/page.tsx` — replaced `confirm()` with `confirmAction()`
-- `src/app/(app)/employees/page.tsx` — replaced `confirm()` and `alert()` with `confirmAction()`
-
-### Phase 10: Fix Employee Data Consistency — DONE
-**Files modified:**
-- `src/lib/providers/frappe/mock-provider.ts` — `getEmployeeList()` dynamically computes `case_count`, `active_artifacts`, `open_findings` from current in-memory state
-
-### Phase 11: Employee Detail Artifacts Table — DONE
-**Files modified:**
-- `src/app/(app)/employees/page.tsx` — reordered detail sections (Cases → Findings → Artifacts → Apps), added dedicated artifacts table
-
-### Phase 12: Fix Settings Interval Persistence — DONE
-**Files modified:**
-- `src/app/(app)/settings/page.tsx` — aligned `intervalOptions` values to match backend expectations (`"Every Hour"`, `"Every 5 Minutes"`, etc.)
-
-### Phase 13: Table Column Sorting — DONE
-**Files modified:**
-- `src/components/sortable-header.tsx` (NEW) — `SortableTableHead` component + `useSort` hook
-- `src/app/(app)/cases/page.tsx` — integrated sorting
-- `src/app/(app)/findings/page.tsx` — integrated sorting
-- `src/app/(app)/artifacts/page.tsx` — integrated sorting
-- `src/app/(app)/employees/page.tsx` — integrated sorting
-
-### Phase 14: Email Notification Integration — DONE
-**Files modified:**
-- `src/lib/email.ts` (NEW) — Resend-based email utility with `sendFindingAlert()` and `sendBatchFindingAlerts()`
-- `src/app/api/notifications/email/route.ts` (NEW) — API route for sending email alerts
-- `src/lib/providers/frappe/mock-provider.ts` — integrated email alerts into `systemScan()` for Critical/High findings
-- `scripts/scheduler.ts` — integrated email reminders for 7-day and 1-day remediation deadlines
-- `.env.example` — added `RESEND_API_KEY`, `NOTIFICATION_SENDER_EMAIL`, `NOTIFICATION_RECIPIENT_EMAIL`
-
-**Verified:**
-- Email API gracefully degrades when `RESEND_API_KEY` is not set (logs "Would send" instead of failing)
-
-### Phase 15: Test Automations — DONE
-**Tested:**
-- Scheduler `--once` mode: background scan finds 2 new issues, triggers email alerts
-- Remediation check runs for scheduled cases
-- Daily scan processes pending cases
-- Notification triggers checked
-
-### Phase 16: Frappe Integration E2E Test — DONE
-**Tested (full pipeline):**
-
-| Step | Test | Result |
-|------|------|--------|
-| 1 | Create case from employee | Pass |
-| 2 | Trigger scan | Pass |
-| 3 | Post-scan findings available | Pass |
-| 4 | Full bundle remediation (artifacts + findings closed) | Pass |
-| 5 | Case status transitions to "Remediated" | Pass |
-| 6 | Individual finding remediation via API | Pass |
-| 7 | Email notification API (graceful degradation) | Pass |
-| 8 | Dashboard KPIs reflect current state | Pass |
-
----
-
-## Summary
-
-All 16 phases completed. Key new files:
-- `src/components/chat-widget.tsx` — floating AI chat
-- `src/components/confirm-dialog.tsx` — custom confirmation dialogs
-- `src/components/sortable-header.tsx` — reusable table sorting
-- `src/lib/email.ts` — Resend email integration
-- `src/app/api/findings/[id]/remediate/route.ts` — finding remediation API
-- `src/app/api/notifications/email/route.ts` — email notification API
-
-Key patterns introduced:
-- `confirmAction()` global imperative dialog API
-- `useSort()` hook for client-side table sorting
-- Query param–based detail views (`?finding=`, `?artifact=`, `?employee=`)
-- Dynamic mock data computation for data consistency
+## Files Modified
+- `src/lib/chatbot.ts` — NEW: knowledge base module
+- `src/lib/providers/frappe/mock-provider.ts` — Rewrote chat() method
+- `src/app/api/chat/route.ts` — Added OpenRouter integration
