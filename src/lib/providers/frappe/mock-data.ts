@@ -148,7 +148,7 @@ export const mockAuditLogs: UnifiedAuditLogEntry[] = [
 // ── Settings ───────────────────────────────────────────────
 export const mockSettings: OGMSettings = {
   auto_scan_on_offboard: true,
-  auto_remediate_on_offboard: false,
+  auto_remediate_on_offboard: true,
   background_scan_enabled: true,
   auto_create_case_on_leave: true,
   background_scan_interval: "Every 5 Minutes",

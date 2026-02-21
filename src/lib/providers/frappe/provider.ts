@@ -182,7 +182,55 @@ export class FrappeProvider implements HrProvider {
   }
 
   async getEmployeeList(): Promise<Employee[]> {
-    return frappeCall<Employee[]>("oauth_gap_monitor.api.get_employee_list");
+    const [ogmEmployees, allFrappeEmployees, activeArtifacts] = await Promise.all([
+      frappeCall<Employee[]>("oauth_gap_monitor.api.get_employee_list"),
+      frappeGetList<Record<string, string>>("Employee", {
+        fields: ["name", "employee_name", "company_email", "status", "department", "designation", "date_of_joining", "relieving_date", "company"],
+        order_by: "modified desc",
+        limit_page_length: 0,
+      }),
+      frappeGetList<{ subject_email: string }>("Access Artifact", {
+        filters: { status: "Active" },
+        fields: ["subject_email"],
+        limit_page_length: 0,
+      }),
+    ]);
+
+    const artifactCountByEmail = new Map<string, number>();
+    for (const a of activeArtifacts) {
+      artifactCountByEmail.set(a.subject_email, (artifactCountByEmail.get(a.subject_email) || 0) + 1);
+    }
+
+    const ogmMap = new Map(ogmEmployees.map(e => [e.employee_id, e]));
+    const merged: Employee[] = [];
+    for (const fe of allFrappeEmployees) {
+      const existing = ogmMap.get(fe.name);
+      if (existing) {
+        const emailCount = artifactCountByEmail.get(fe.company_email) || 0;
+        if (emailCount > (existing.active_artifacts ?? 0)) {
+          existing.active_artifacts = emailCount;
+        }
+        merged.push(existing);
+        ogmMap.delete(fe.name);
+      } else {
+        merged.push({
+          employee_id: fe.name,
+          employee_name: fe.employee_name || "",
+          company_email: fe.company_email || "",
+          emp_status: (fe.status === "Left" ? "Left" : fe.status === "Suspended" ? "Suspended" : "Active") as Employee["emp_status"],
+          date_of_joining: fe.date_of_joining || undefined,
+          relieving_date: fe.relieving_date || undefined,
+          department: fe.department || undefined,
+          designation: fe.designation || undefined,
+          company: fe.company || undefined,
+          case_count: 0,
+          active_artifacts: artifactCountByEmail.get(fe.company_email) || 0,
+          open_findings: 0,
+        });
+      }
+    }
+    for (const remaining of ogmMap.values()) merged.push(remaining);
+    return merged;
   }
 
   async getEmployeeDetail(employeeId: string): Promise<EmployeeDetail> {

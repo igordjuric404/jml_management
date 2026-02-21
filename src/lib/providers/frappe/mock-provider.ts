@@ -220,7 +220,7 @@ export class MockProvider implements HrProvider {
     };
   }
 
-  async listCases(): Promise<OffboardingCase[]> {
+  async listCases(_filters?: Record<string, unknown>): Promise<OffboardingCase[]> {
     this._checkOverdueRemediations();
     return clone(cases);
   }
@@ -410,7 +410,7 @@ export class MockProvider implements HrProvider {
     return scanEntries;
   }
 
-  async executeRemediation(caseName: string, action: string): Promise<RemediationResult> {
+  async executeRemediation(caseName: string, action: string, _kwargs?: Record<string, unknown>): Promise<RemediationResult> {
     const c = cases.find(c => c.name === caseName);
     if (!c) throw new Error(`Case not found: ${caseName}`);
 
@@ -746,7 +746,7 @@ export class MockProvider implements HrProvider {
     return { removed, added };
   }
 
-  async listAuditLogs(): Promise<UnifiedAuditLogEntry[]> {
+  async listAuditLogs(_filters?: Record<string, unknown>): Promise<UnifiedAuditLogEntry[]> {
     return clone(auditLogs);
   }
 
