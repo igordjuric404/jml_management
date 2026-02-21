@@ -72,7 +72,9 @@ export default function AuditLogPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {entries?.map((log) => (
+                {entries
+                  ?.filter((log, idx, arr) => arr.findIndex(l => l.name === log.name) === idx)
+                  .map((log) => (
                   <Fragment key={log.name}>
                     <TableRow>
                       <TableCell>
@@ -80,7 +82,7 @@ export default function AuditLogPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => toggleExpand(log.name)}
+                            onClick={(e) => { e.stopPropagation(); toggleExpand(log.name); }}
                           >
                             {expanded.has(log.name) ? (
                               <ChevronUp className="h-4 w-4" />
@@ -128,7 +130,7 @@ export default function AuditLogPage() {
                       </TableCell>
                     </TableRow>
                     {expanded.has(log.name) && log.request_json && (
-                      <TableRow>
+                      <TableRow key={`${log.name}-detail`}>
                         <TableCell colSpan={7} className="bg-muted/50 p-4">
                           <p className="text-xs font-mono whitespace-pre-wrap break-all">
                             {log.request_json}

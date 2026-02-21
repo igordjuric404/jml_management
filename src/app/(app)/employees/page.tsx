@@ -218,6 +218,7 @@ function EmployeesPageContent() {
           </Card>
         </div>
 
+        {(detail.cases?.length ?? 0) > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Associated Cases</CardTitle>
@@ -256,7 +257,9 @@ function EmployeesPageContent() {
             </Table>
           </CardContent>
         </Card>
+        )}
 
+        {(detail.findings?.length ?? 0) > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Findings</CardTitle>
@@ -301,7 +304,9 @@ function EmployeesPageContent() {
             </Table>
           </CardContent>
         </Card>
+        )}
 
+        {(detail.artifacts?.length ?? 0) > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Access Artifacts</CardTitle>
@@ -350,7 +355,9 @@ function EmployeesPageContent() {
             </Table>
           </CardContent>
         </Card>
+        )}
 
+        {(detail.apps?.length ?? 0) > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Applications</CardTitle>
@@ -395,6 +402,7 @@ function EmployeesPageContent() {
             </Table>
           </CardContent>
         </Card>
+        )}
       </div>
     );
   }

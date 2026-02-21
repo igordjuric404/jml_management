@@ -12,10 +12,9 @@ import type {
   OGMSettings,
 } from "@/lib/dto/types";
 
-const now = new Date().toISOString();
 const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString();
 const monthAgo = new Date(Date.now() - 30 * 86400000).toISOString();
-const twoWeeksFromNow = new Date(Date.now() + 14 * 86400000).toISOString();
+const oneHourAgo = new Date(Date.now() - 3600000).toISOString();
 
 // ── Employees ──────────────────────────────────────────────
 export const mockEmployees: Employee[] = [
@@ -45,7 +44,7 @@ export const mockCases: OffboardingCase[] = [
   { name: "OBC-2025-00002", employee: "HR-EMP-00002", employee_name: "Bob Smith", primary_email: "bob.smith@testcorp.com", event_type: "Offboard", effective_date: "2025-11-15T00:00:00", status: "Gaps Found", notes: "Scenario B: ASPs still active", notify_user_1w: false, notify_user_1d: false, creation: monthAgo },
   { name: "OBC-2025-00003", employee: "HR-EMP-00003", employee_name: "Charlie Brown", primary_email: "charlie.brown@testcorp.com", event_type: "Offboard", effective_date: "2025-10-20T00:00:00", status: "Gaps Found", notes: "Scenario C: Post-offboard login detected", notify_user_1w: false, notify_user_1d: false, creation: monthAgo },
   { name: "OBC-2025-00004", employee: "HR-EMP-00004", employee_name: "Diana Prince", primary_email: "diana.prince@testcorp.com", event_type: "Security Review", effective_date: "2025-09-30T00:00:00", status: "Gaps Found", notes: "Scenario D: Admin MFA weak + DWD risk", notify_user_1w: false, notify_user_1d: false, creation: monthAgo },
-  { name: "OBC-2025-00005", employee: "HR-EMP-00005", employee_name: "Eve Wilson", primary_email: "eve.wilson@testcorp.com", event_type: "Offboard", effective_date: "2025-08-15T00:00:00", status: "Scheduled", scheduled_remediation_date: twoWeeksFromNow, notes: "Scenario E: Scheduled remediation", notify_user_1w: true, notify_user_1d: false, creation: monthAgo },
+  { name: "OBC-2025-00005", employee: "HR-EMP-00005", employee_name: "Eve Wilson", primary_email: "eve.wilson@testcorp.com", event_type: "Offboard", effective_date: "2025-08-15T00:00:00", status: "Scheduled", scheduled_remediation_date: oneHourAgo, notes: "Scenario E: Scheduled remediation", notify_user_1w: true, notify_user_1d: false, creation: monthAgo },
   { name: "OBC-2025-00006", employee: "HR-EMP-00006", employee_name: "Frank Castle", primary_email: "frank.castle@testcorp.com", event_type: "Offboard", effective_date: "2025-07-01T00:00:00", status: "Remediated", notes: "Scenario F: Already remediated", notify_user_1w: false, notify_user_1d: false, creation: monthAgo },
   { name: "OBC-2025-00007", employee: "HR-EMP-00007", employee_name: "Grace Lee", primary_email: "grace.lee@testcorp.com", event_type: "Offboard", effective_date: "2025-12-15T00:00:00", status: "Gaps Found", notes: "Scenario G: All clear after scan", notify_user_1w: false, notify_user_1d: false, creation: weekAgo },
   { name: "OBC-2025-00008", employee: "HR-EMP-00008", employee_name: "Henry Ford", primary_email: "henry.ford@testcorp.com", event_type: "Manual Check", effective_date: "2025-06-30T00:00:00", status: "Gaps Found", notes: "Scenario H: Mixed artifacts", notify_user_1w: false, notify_user_1d: false, creation: weekAgo },
@@ -152,10 +151,10 @@ export const mockSettings: OGMSettings = {
   auto_remediate_on_offboard: false,
   background_scan_enabled: true,
   auto_create_case_on_leave: true,
-  background_scan_interval: "Every Hour",
+  background_scan_interval: "Every 5 Minutes",
   remediation_check_interval: "Every 5 Minutes",
   notify_on_new_findings: true,
   notify_on_remediation: true,
-  notification_email: "security@testcorp.com",
+  notification_email: "igordjuric404@gmail.com",
   default_remediation_action: "full_bundle",
 };
