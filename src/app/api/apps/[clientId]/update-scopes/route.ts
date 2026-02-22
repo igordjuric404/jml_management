@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireManager } from "@/lib/auth/api-guard";
 import { getProvider } from "@/lib/providers";
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await requireManager();
+    if (!auth.authorized) return auth.response;
     const body = await req.json();
     const provider = getProvider();
     const data = await provider.updateUserScopes(body.artifact_name, body.scopes);

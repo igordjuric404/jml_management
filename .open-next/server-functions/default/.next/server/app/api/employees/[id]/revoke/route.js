@@ -1,8 +1,0 @@
-var R=require("../../../../../chunks/[turbopack]_runtime.js")("server/app/api/employees/[id]/revoke/route.js")
-R.c("server/chunks/[root-of-the-server]__3290a3a0._.js")
-R.c("server/chunks/src_lib_providers_index_ts_b0ab9515._.js")
-R.c("server/chunks/[root-of-the-server]__f408c708._.js")
-R.c("server/chunks/[root-of-the-server]__09f97b47._.js")
-R.c("server/chunks/_next-internal_server_app_api_employees_[id]_revoke_route_actions_812a953e.js")
-R.m(67612)
-module.exports=R.m(67612).exports

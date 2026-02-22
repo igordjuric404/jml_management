@@ -170,7 +170,9 @@ export async function frappeLogin(
 
   return {
     cookies,
-    user: data.message || username,
+    user: typeof data.message === "string" && data.message !== "Logged In"
+      ? data.message
+      : username,
     full_name: data.full_name || username,
   };
 }

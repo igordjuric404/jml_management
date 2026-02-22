@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAuth, requireManager } from "@/lib/auth/api-guard";
 import { getProvider } from "@/lib/providers";
 
 function searchParamsToFilters(searchParams: URLSearchParams): Record<string, unknown> {
@@ -11,6 +12,8 @@ function searchParamsToFilters(searchParams: URLSearchParams): Record<string, un
 
 export async function GET(req: NextRequest) {
   try {
+    const auth = await requireAuth();
+    if (!auth.authorized) return auth.response;
     const filters = searchParamsToFilters(req.nextUrl.searchParams);
     const provider = getProvider();
     const data = await provider.listArtifacts(Object.keys(filters).length > 0 ? filters : undefined);
@@ -23,6 +26,8 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await requireManager();
+    if (!auth.authorized) return auth.response;
     const body = await req.json();
     const provider = getProvider();
     const data = await provider.remediateArtifacts(body.docnames);

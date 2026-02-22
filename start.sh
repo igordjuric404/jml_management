@@ -31,12 +31,12 @@ if [ ! -f ".env.local" ]; then
 fi
 
 # ── Check Frappe connectivity (if not mock) ────────────────
-USE_MOCK=$(grep NEXT_PUBLIC_USE_MOCK .env.local 2>/dev/null | cut -d= -f2 | tr -d '"' | tr -d "'")
-FRAPPE_URL=$(grep NEXT_PUBLIC_FRAPPE_URL .env.local 2>/dev/null | cut -d= -f2 | tr -d '"' | tr -d "'")
+USE_MOCK=$(grep NEXT_PUBLIC_USE_MOCK .env.local 2>/dev/null | cut -d= -f2 | tr -d '"' | tr -d "'" || true)
+FRAPPE_URL=$(grep NEXT_PUBLIC_FRAPPE_URL .env.local 2>/dev/null | cut -d= -f2 | tr -d '"' | tr -d "'" || true)
 
 if [ "$USE_MOCK" != "true" ] && [ -n "$FRAPPE_URL" ]; then
   log "Checking Frappe connectivity at $FRAPPE_URL..."
-  if curl -sf "$FRAPPE_URL/api/method/frappe.auth.get_logged_user" >/dev/null 2>&1; then
+  if curl -sf "$FRAPPE_URL/api/method/frappe.ping" >/dev/null 2>&1; then
     log "Frappe is reachable."
   else
     warn "Cannot reach Frappe at $FRAPPE_URL. Falling back to mock mode."
@@ -47,7 +47,7 @@ else
 fi
 
 # ── Build (if needed) ──────────────────────────────────────
-if [ ! -d ".next" ] || [ "$1" = "--build" ] 2>/dev/null; then
+if [ ! -d ".next" ] || [ "${1:-}" = "--build" ]; then
   log "Building Next.js application..."
   npm run build
 fi

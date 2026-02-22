@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model OffboardingCase {
+  id              String   @id @default(cuid())
+  employeeId      String
+  employeeName    String
+  primaryEmail    String
+  eventType       String   @default("Offboard")
+  effectiveDate   String?
+  status          String   @default("Draft")
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  findings Finding[]
+  auditLogs AuditLogEntry[]
+}
+
+model Finding {
+  id                String   @id @default(cuid())
+  caseId            String
+  findingType       String
+  severity          String
+  summary           String
+  subjectEmail      String
+  recommendedAction String?
+  closedAt          DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  case OffboardingCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+}
+
+model AuditLogEntry {
+  id               String   @id @default(cuid())
+  caseId           String?
+  actorUser        String
+  actionType       String
+  targetEmail      String
+  result           String
+  remediationType  String?
+  requestJson      String?
+  responseJson     String?
+  createdAt        DateTime @default(now())
+
+  case OffboardingCase? @relation(fields: [caseId], references: [id], onDelete: SetNull)
+}
+
+model AppSettings {
+  id                          String  @id @default("singleton")
+  autoScanOnOffboard          Boolean @default(false)
+  autoRemediateOnOffboard     Boolean @default(false)
+  backgroundScanEnabled       Boolean @default(false)
+  autoCreateCaseOnLeave       Boolean @default(true)
+  backgroundScanInterval      String  @default("daily")
+  remediationCheckInterval    String  @default("6h")
+  notifyOnNewFindings         Boolean @default(true)
+  notifyOnRemediation         Boolean @default(true)
+  notificationEmail           String?
+  defaultRemediationAction    String  @default("full_bundle")
+}

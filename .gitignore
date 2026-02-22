@@ -40,5 +40,16 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# wrangler
+# cloudflare build output
+.open-next/
 .wrangler/
+microsoft-credentials.txt
+
+# remediation logs (contain tenant-specific data)
+/logs/
+
+/src/generated/prisma
+
+# SQLite database
+prisma/dev.db
+prisma/dev.db-journal

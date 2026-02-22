@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAuth, requireManager } from "@/lib/auth/api-guard";
 import { getProvider } from "@/lib/providers";
 
 export async function GET() {
   try {
+    const auth = await requireAuth();
+    if (!auth.authorized) return auth.response;
     const provider = getProvider();
     const data = await provider.getSettings();
     return NextResponse.json({ status: "success", data });
@@ -14,6 +17,8 @@ export async function GET() {
 
 export async function PATCH(req: NextRequest) {
   try {
+    const auth = await requireManager();
+    if (!auth.authorized) return auth.response;
     const body = await req.json();
     const provider = getProvider();
     const data = await provider.updateSettings(body);

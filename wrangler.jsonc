@@ -10,8 +10,12 @@
   "vars": {
     "NEXT_PUBLIC_FRAPPE_URL": "http://localhost:8000",
     "NEXT_PUBLIC_APP_NAME": "JML Management",
-    "RESEND_API_KEY": "re_CBCLXGCX_Kzy1Fw4QMrB4HDYDJ534NPxc",
-    "NOTIFICATION_SENDER_EMAIL": "offboarding@resend.dev",
-    "NOTIFICATION_RECIPIENT_EMAIL": "igordjuric404@gmail.com"
+    "NOTIFICATION_SENDER_EMAIL": "offboarding@resend.dev"
+    // Secrets (set via `wrangler secret put`):
+    // FRAPPE_API_KEY, FRAPPE_API_SECRET
+    // MICROSOFT_TENANT_ID, MICROSOFT_CLIENT_ID, MICROSOFT_CLIENT_SECRET
+    // RESEND_API_KEY
+    // OPENROUTER_API_KEY
+    // NOTIFICATION_RECIPIENT_EMAIL
   }
 }

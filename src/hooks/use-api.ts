@@ -26,6 +26,10 @@ interface ApiResponse<T> {
 
 async function apiFetch<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, options);
+  if (res.status === 401 && typeof window !== "undefined") {
+    window.location.href = "/login";
+    throw new Error("Session expired");
+  }
   const json: ApiResponse<T> = await res.json();
   if (json.status === "error") throw new Error(json.error || "API error");
   return json.data as T;

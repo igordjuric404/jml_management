@@ -103,10 +103,13 @@ export function getProvider(type: ProviderType = "frappe"): HrProvider {
       const { FrappeProvider } = require("@/lib/providers/frappe/provider");
       return new FrappeProvider();
     }
+    case "microsoft": {
+      const { FrappeProvider } = require("@/lib/providers/frappe/provider");
+      const { MicrosoftEnhancedProvider } = require("@/lib/providers/microsoft/enhanced-provider");
+      return new MicrosoftEnhancedProvider(new FrappeProvider());
+    }
     case "google":
       throw new Error("Google Workspace provider not yet implemented. See docs for enablement steps.");
-    case "microsoft":
-      throw new Error("Microsoft 365 provider not yet implemented. See docs for enablement steps.");
     default:
       throw new Error(`Unknown provider type: ${type}`);
   }

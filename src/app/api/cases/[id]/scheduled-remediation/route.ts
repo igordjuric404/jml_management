@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireManager } from "@/lib/auth/api-guard";
 import { getProvider } from "@/lib/providers";
 
 export async function POST(
@@ -6,6 +7,8 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const auth = await requireManager();
+    if (!auth.authorized) return auth.response;
     const { id } = await params;
     const provider = getProvider();
     const data = await provider.runScheduledRemediationNow(id);

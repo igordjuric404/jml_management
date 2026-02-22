@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getProvider } from "@/lib/providers";
+import { requireManager } from "@/lib/auth/api-guard";
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = await requireManager();
+  if (!auth.authorized) return auth.response;
+
   try {
     const { id } = await params;
     const body = await req.json();
