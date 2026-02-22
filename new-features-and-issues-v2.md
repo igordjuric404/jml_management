@@ -64,3 +64,37 @@
   - Verify in the UI and underlying data that access is removed completely for that specific user and status of the artifacts is changed to revoked for example
   - status of the employees changed to left
 - Keep the test narrow and controlled: only validate the targeted offboarded user, and do not accidentally revoke unrelated users.
+
+
+8) Make sure that the tests are actually passing, I am not going to deploy the production Because I ran out of storage and the bundle is too big, but the CID that did run, Failed
+
+16s
+Run npm run build
+
+> jml_management@0.1.0 build
+> next build
+
+⚠ No build cache found. Please configure build caching for faster rebuilds. Read more: https://nextjs.org/docs/messages/no-cache
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+▲ Next.js 16.1.6 (Turbopack)
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 6.2s
+  Running TypeScript ...
+Failed to compile.
+
+./src/lib/db.ts:1:10
+Type error: Module '"@prisma/client"' has no exported member 'PrismaClient'.
+
+> 1 | import { PrismaClient } from "@prisma/client";
+    |          ^
+  2 | import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+  3 | import path from "node:path";
+  4 |
+Next.js build worker exited with code: 1 and signal: null
+Error: Process completed with exit code 1.
